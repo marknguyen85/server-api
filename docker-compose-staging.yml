@@ -1,0 +1,12 @@
+version: "3"
+services:
+  cached:
+    build: ./
+    image: cached
+    container_name: cached
+    env_file:
+      - env_staging.env
+    ports:
+      - "3001:3001"
+    volumes:
+      - "./db:/go/src/github.com/ChainTex/server-go/persister/db"

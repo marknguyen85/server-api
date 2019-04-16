@@ -1,0 +1,10 @@
+version: "3"
+services:
+  cached:
+    build: ./
+    env_file:
+      - env_rinkeby.env
+    ports:
+      - "3001:3001"
+    volumes:
+      - "./db:/go/src/github.com/ChainTex/server-go/persister/db"
