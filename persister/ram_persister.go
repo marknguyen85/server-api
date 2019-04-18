@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/marknguyen85/server-api/tomochain"
 )
 
 const (
@@ -33,7 +33,7 @@ type RamPersister struct {
 	kyberEnabled      bool
 	isNewKyberEnabled bool
 
-	rates     []ethereum.Rate
+	rates     []tomochain.Rate
 	isNewRate bool
 	updatedAt int64
 
@@ -48,30 +48,30 @@ type RamPersister struct {
 	// rateTOMOCG      string
 	// isNewRateUsdCG bool
 
-	events     []ethereum.EventHistory
+	events     []tomochain.EventHistory
 	isNewEvent bool
 
 	maxGasPrice      string
 	isNewMaxGasPrice bool
 
-	gasPrice      *ethereum.GasPrice
+	gasPrice      *tomochain.GasPrice
 	isNewGasPrice bool
 
 	// ethRate      string
 	// isNewEthRate bool
 
-	tokenInfo map[string]*ethereum.TokenGeneralInfo
-	// tokenInfoCG map[string]*ethereum.TokenGeneralInfo
+	tokenInfo map[string]*tomochain.TokenGeneralInfo
+	// tokenInfoCG map[string]*tomochain.TokenGeneralInfo
 
 	//isNewTokenInfo bool
 
-	marketInfo              map[string]*ethereum.MarketInfo
+	marketInfo              map[string]*tomochain.MarketInfo
 	last7D                  map[string][]float64
 	isNewTrackerData        bool
 	numRequestFailedTracker int
 
-	rightMarketInfo map[string]*ethereum.RightMarketInfo
-	// rightMarketInfoCG map[string]*ethereum.RightMarketInfo
+	rightMarketInfo map[string]*tomochain.RightMarketInfo
+	// rightMarketInfoCG map[string]*tomochain.RightMarketInfo
 
 	isNewMarketInfo bool
 	// isNewMarketInfoCG bool
@@ -86,7 +86,7 @@ func NewRamPersister() (*RamPersister, error) {
 	kyberEnabled := true
 	isNewKyberEnabled := true
 
-	rates := []ethereum.Rate{}
+	rates := []tomochain.Rate{}
 	isNewRate := false
 
 	latestBlock := "0"
@@ -99,28 +99,28 @@ func NewRamPersister() (*RamPersister, error) {
 	// rateTOMOCG := "0"
 	// isNewRateUsdCG := true
 
-	events := make([]ethereum.EventHistory, 0)
+	events := make([]tomochain.EventHistory, 0)
 	isNewEvent := true
 
 	maxGasPrice := "50"
 	isNewMaxGasPrice := true
 
-	gasPrice := ethereum.GasPrice{}
+	gasPrice := tomochain.GasPrice{}
 	isNewGasPrice := true
 
 	// ethRate := "0"
 	// isNewEthRate := true
 
-	tokenInfo := map[string]*ethereum.TokenGeneralInfo{}
-	// tokenInfoCG := map[string]*ethereum.TokenGeneralInfo{}
+	tokenInfo := map[string]*tomochain.TokenGeneralInfo{}
+	// tokenInfoCG := map[string]*tomochain.TokenGeneralInfo{}
 	//isNewTokenInfo := true
 
-	marketInfo := map[string]*ethereum.MarketInfo{}
+	marketInfo := map[string]*tomochain.MarketInfo{}
 	last7D := map[string][]float64{}
 	isNewTrackerData := true
 
-	rightMarketInfo := map[string]*ethereum.RightMarketInfo{}
-	// rightMarketInfoCG := map[string]*ethereum.RightMarketInfo{}
+	rightMarketInfo := map[string]*tomochain.RightMarketInfo{}
+	// rightMarketInfoCG := map[string]*tomochain.RightMarketInfo{}
 
 	isNewMarketInfo := true
 	// isNewMarketInfoCG := true
@@ -161,21 +161,21 @@ func NewRamPersister() (*RamPersister, error) {
 	return persister, nil
 }
 
-func (self *RamPersister) SaveGeneralInfoTokens(generalInfo map[string]*ethereum.TokenGeneralInfo) {
+func (self *RamPersister) SaveGeneralInfoTokens(generalInfo map[string]*tomochain.TokenGeneralInfo) {
 	self.mu.Lock()
 	defer self.mu.Unlock()
 	self.tokenInfo = generalInfo
 	// self.tokenInfoCG = generalInfoCG
 }
 
-func (self *RamPersister) GetTokenInfo() map[string]*ethereum.TokenGeneralInfo {
+func (self *RamPersister) GetTokenInfo() map[string]*tomochain.TokenGeneralInfo {
 	self.mu.RLock()
 	defer self.mu.RUnlock()
 	return self.tokenInfo
 }
 
 /////------------------------------
-func (self *RamPersister) GetRate() []ethereum.Rate {
+func (self *RamPersister) GetRate() []tomochain.Rate {
 	self.mu.RLock()
 	defer self.mu.RUnlock()
 	return self.rates
@@ -200,7 +200,7 @@ func (self *RamPersister) GetIsNewRate() bool {
 	return self.isNewRate
 }
 
-func (self *RamPersister) SaveRate(rates []ethereum.Rate, timestamp int64) {
+func (self *RamPersister) SaveRate(rates []tomochain.Rate, timestamp int64) {
 	self.mu.Lock()
 	defer self.mu.Unlock()
 	self.rates = rates
@@ -268,7 +268,7 @@ func (self *RamPersister) GetNewMaxGasPrice() bool {
 
 //--------------------------------------------------------------
 
-func (self *RamPersister) SaveGasPrice(gasPrice *ethereum.GasPrice) {
+func (self *RamPersister) SaveGasPrice(gasPrice *tomochain.GasPrice) {
 	self.mu.Lock()
 	defer self.mu.Unlock()
 	self.gasPrice = gasPrice
@@ -279,7 +279,7 @@ func (self *RamPersister) SetNewGasPrice(isNew bool) {
 	defer self.mu.Unlock()
 	self.isNewGasPrice = isNew
 }
-func (self *RamPersister) GetGasPrice() *ethereum.GasPrice {
+func (self *RamPersister) GetGasPrice() *tomochain.GasPrice {
 	self.mu.Lock()
 	defer self.mu.Unlock()
 	return self.gasPrice
@@ -441,13 +441,13 @@ func (self *RamPersister) SetNewLatestBlock(isNew bool) {
 // return data from kyber tracker
 
 // use this api for 3 infomations change, marketcap, volume
-func (self *RamPersister) GetRightMarketData() map[string]*ethereum.RightMarketInfo {
+func (self *RamPersister) GetRightMarketData() map[string]*tomochain.RightMarketInfo {
 	self.mu.Lock()
 	defer self.mu.Unlock()
 	return self.rightMarketInfo
 }
 
-// func (self *RamPersister) GetRightMarketDataCG() map[string]*ethereum.RightMarketInfo {
+// func (self *RamPersister) GetRightMarketDataCG() map[string]*tomochain.RightMarketInfo {
 // 	self.mu.Lock()
 // 	defer self.mu.Unlock()
 // 	return self.rightMarketInfoCG
@@ -479,9 +479,9 @@ func (self *RamPersister) GetLast7D(listTokens string) map[string][]float64 {
 	return result
 }
 
-func (self *RamPersister) SaveMarketData(marketRate map[string]*ethereum.Rates, mapTokenInfo map[string]*ethereum.TokenGeneralInfo, tokens map[string]ethereum.Token) {
+func (self *RamPersister) SaveMarketData(marketRate map[string]*tomochain.Rates, mapTokenInfo map[string]*tomochain.TokenGeneralInfo, tokens map[string]tomochain.Token) {
 	lastSevenDays := map[string][]float64{}
-	newResult := map[string]*ethereum.RightMarketInfo{}
+	newResult := map[string]*tomochain.RightMarketInfo{}
 	if len(mapTokenInfo) == 0 {
 		self.mu.RLock()
 		mapTokenInfo = self.tokenInfo
@@ -489,7 +489,7 @@ func (self *RamPersister) SaveMarketData(marketRate map[string]*ethereum.Rates, 
 	}
 	for symbol := range tokens {
 		dataSevenDays := []float64{}
-		rightMarketInfo := &ethereum.RightMarketInfo{}
+		rightMarketInfo := &tomochain.RightMarketInfo{}
 		rateInfo := marketRate[symbol]
 		if rateInfo != nil {
 			dataSevenDays = rateInfo.P

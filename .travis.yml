@@ -1,6 +1,6 @@
 sudo: required
 
-go_import_path: github.com/ChainTex/server-go
+go_import_path: github.com/marknguyen85/server-api
 
 language: go
 

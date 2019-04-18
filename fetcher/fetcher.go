@@ -11,9 +11,9 @@ import (
 	// "strconv"
 	"time"
 
-	"github.com/ChainTex/server-go/common"
-	"github.com/ChainTex/server-go/tomochain"
-	// nFetcher "github.com/ChainTex/server-go/fetcher/normal-fetcher"
+	"github.com/marknguyen85/server-api/common"
+	"github.com/marknguyen85/server-api/tomochain"
+	// nFetcher "github.com/marknguyen85/server-api/fetcher/normal-fetcher"
 )
 
 const (

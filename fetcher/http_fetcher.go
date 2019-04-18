@@ -7,9 +7,9 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/ChainTex/server-go/common"
-	"github.com/ChainTex/server-go/tomochain"
-	fCommon "github.com/ChainTex/server-go/fetcher/fetcher-common"
+	"github.com/marknguyen85/server-api/common"
+	"github.com/marknguyen85/server-api/tomochain"
+	fCommon "github.com/marknguyen85/server-api/fetcher/fetcher-common"
 )
 
 const (

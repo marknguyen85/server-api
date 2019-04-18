@@ -1,8 +1,8 @@
 package common
 
 const (
-	// TOMOAddr ethereum address
+	// TOMOAddr tomochain address
 	TOMOAddr = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-	// TOMOSymbol ethereum symbol
+	// TOMOSymbol tomochain symbol
 	TOMOSymbol = "TOMO"
 )

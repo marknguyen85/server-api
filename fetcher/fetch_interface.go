@@ -1,7 +1,7 @@
 package fetcher
 
 import (
-	bFetcher "github.com/ChainTex/server-go/fetcher/blockchain-fetcher"
+	bFetcher "github.com/marknguyen85/server-api/fetcher/blockchain-fetcher"
 )
 
 type RateUSD struct {

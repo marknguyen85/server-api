@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/ChainTex/server-go/tomochain"
+	"github.com/marknguyen85/server-api/tomochain"
 	"github.com/influxdata/influxdb1-client/v2"
 )
 

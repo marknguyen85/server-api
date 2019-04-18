@@ -7,11 +7,11 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/ChainTex/server-go/common"
-	"github.com/ChainTex/server-go/ethereum"
-	"github.com/ChainTex/server-go/fetcher"
-	"github.com/ChainTex/server-go/http"
-	persister "github.com/ChainTex/server-go/persister"
+	"github.com/marknguyen85/server-api/common"
+	"github.com/marknguyen85/server-api/tomochain"
+	"github.com/marknguyen85/server-api/fetcher"
+	"github.com/marknguyen85/server-api/http"
+	persister "github.com/marknguyen85/server-api/persister"
 )
 
 type fetcherFunc func(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher)
@@ -71,12 +71,12 @@ func main() {
 		}
 	}()
 	var (
-		initRate  []ethereum.Rate
+		initRate  []tomochain.Rate
 		ethSymbol = common.TOMOSymbol
 	)
 	for symbol := range fertcherIns.GetListToken() {
 		if symbol == ethSymbol {
-			ethRate := ethereum.Rate{
+			ethRate := tomochain.Rate{
 				Source:  ethSymbol,
 				Dest:    ethSymbol,
 				Rate:    "0",
@@ -84,13 +84,13 @@ func main() {
 			}
 			initRate = append(initRate, ethRate, ethRate)
 		} else {
-			buyRate := ethereum.Rate{
+			buyRate := tomochain.Rate{
 				Source:  ethSymbol,
 				Dest:    symbol,
 				Rate:    "0",
 				Minrate: "0",
 			}
-			sellRate := ethereum.Rate{
+			sellRate := tomochain.Rate{
 				Source:  symbol,
 				Dest:    ethSymbol,
 				Rate:    "0",
@@ -242,8 +242,8 @@ func fetchBlockNumber(persister persister.Persister, boltIns persister.BoltInter
 	}
 }
 
-func makeMapRate(rates []ethereum.Rate) map[string]ethereum.Rate {
-	mapRate := make(map[string]ethereum.Rate)
+func makeMapRate(rates []tomochain.Rate) map[string]tomochain.Rate {
+	mapRate := make(map[string]tomochain.Rate)
 	for _, r := range rates {
 		mapRate[fmt.Sprintf("%s_%s", r.Source, r.Dest)] = r
 	}
@@ -251,7 +251,7 @@ func makeMapRate(rates []ethereum.Rate) map[string]ethereum.Rate {
 }
 
 func fetchRate(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher) {
-	var result []ethereum.Rate
+	var result []tomochain.Rate
 	currentRate := persister.GetRate()
 	tokenPriority := fetcher.GetListTokenPriority()
 	rates, err := fetcher.GetRate(currentRate, persister.GetIsNewRate(), tokenPriority, false)
@@ -282,10 +282,10 @@ func fetchRate(persister persister.Persister, boltIns persister.BoltInterface, f
 }
 
 func fetchRateWithFallback(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher) {
-	var result []ethereum.Rate
+	var result []tomochain.Rate
 	currentRate := persister.GetRate()
 	listToken := fetcher.GetListToken()
-	newList := make(map[string]ethereum.Token)
+	newList := make(map[string]tomochain.Token)
 	for _, t := range listToken {
 		if !t.Priority {
 			newList[t.Symbol] = t
@@ -343,7 +343,7 @@ func fetchRate7dData(persister persister.Persister, boltIns persister.BoltInterf
 	currentGeneral, err := boltIns.GetGeneralInfo(mapToken)
 	if err != nil {
 		log.Println(err.Error())
-		currentGeneral = make(map[string]*ethereum.TokenGeneralInfo)
+		currentGeneral = make(map[string]*tomochain.TokenGeneralInfo)
 	}
 	persister.SaveMarketData(data, currentGeneral, mapToken)
 	// persister.SetIsNewMarketInfo(true)

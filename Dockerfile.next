@@ -1,15 +1,15 @@
 FROM golang:stretch AS build-env
 
-COPY . /go/src/github.com/ChainTex/server-go
+COPY . /go/src/github.com/marknguyen85/server-api
 WORKDIR /go
-RUN go install -v github.com/ChainTex/server-go
+RUN go install -v github.com/marknguyen85/server-api
 
 FROM debian:stretch
 RUN apt-get update && \
     apt install -y --no-install-recommends ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-COPY --from=build-env /go/bin/server-go /wallet-cache
-COPY --from=build-env /go/src/github.com/ChainTex/server-go/env/ /env/
+COPY --from=build-env /go/bin/server-api /wallet-cache
+COPY --from=build-env /go/src/github.com/marknguyen85/server-api/env/ /env/
 ENV GIN_MODE release
 ENV CHAINTEX_ENV production
 ENV LOG_TO_STDOUT true

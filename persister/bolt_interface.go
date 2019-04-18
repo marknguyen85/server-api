@@ -1,6 +1,6 @@
 package persister
 
-import "github.com/ChainTex/server-go/tomochain"
+import "github.com/marknguyen85/server-api/tomochain"
 
 type BoltInterface interface {
 	StoreGeneralInfo(map[string]*tomochain.TokenGeneralInfo) error

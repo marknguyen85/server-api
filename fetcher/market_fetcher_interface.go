@@ -1,8 +1,8 @@
 package fetcher
 
 import (
-	"github.com/ChainTex/server-go/tomochain"
-	mFetcher "github.com/ChainTex/server-go/fetcher/market-fetcher"
+	"github.com/marknguyen85/server-api/tomochain"
+	mFetcher "github.com/marknguyen85/server-api/fetcher/market-fetcher"
 )
 
 type MarketFetcherInterface interface {

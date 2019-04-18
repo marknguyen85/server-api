@@ -1,4 +1,4 @@
-package ethereum
+package tomochain
 
 // const (
 // 	TIME_TO_DELETE = 18000

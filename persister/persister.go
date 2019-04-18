@@ -1,7 +1,7 @@
 package persister
 
 import (
-	"github.com/ChainTex/server-go/tomochain"
+	"github.com/marknguyen85/server-api/tomochain"
 )
 
 type RateUSD struct {

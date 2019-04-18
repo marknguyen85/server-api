@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ChainTex/server-go/fetcher"
-	persister "github.com/ChainTex/server-go/persister"
+	"github.com/marknguyen85/server-api/fetcher"
+	persister "github.com/marknguyen85/server-api/persister"
 	raven "github.com/getsentry/raven-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sentry"

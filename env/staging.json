@@ -44,7 +44,7 @@
       "address": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       "decimals": 18,
       "cmc_id":"1027",
-      "cg_id": "ethereum"
+      "cg_id": "tomochain"
     },
     {
       "name": "Wrapped Ether",

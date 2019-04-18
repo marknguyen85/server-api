@@ -9,4 +9,4 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - "./db:/go/src/github.com/ChainTex/server-go/persister/db"
+      - "./db:/go/src/github.com/marknguyen85/server-api/persister/db"
