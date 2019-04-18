@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/ChainTex/server-go/tomochain"
 	fCommon "github.com/ChainTex/server-go/fetcher/fetcher-common"
 )
 
@@ -23,13 +23,13 @@ func NewCGFetcher() *CGFetcher {
 
 func (self *CGFetcher) GetRateUsdEther() (string, error) {
 	// typeMarket := self.typeMarket
-	url := self.API + "/coins/ethereum"
+	url := self.API + "/coins/tomochain"
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
 		return "", err
 	}
-	rateItem := ethereum.RateUSDCG{}
+	rateItem := tomochain.RateUSDCG{}
 	err = json.Unmarshal(b, &rateItem)
 	if err != nil {
 		log.Print(err)
@@ -39,14 +39,14 @@ func (self *CGFetcher) GetRateUsdEther() (string, error) {
 	return rateString, nil
 }
 
-func (self *CGFetcher) GetGeneralInfo(coinID string) (*ethereum.TokenGeneralInfo, error) {
+func (self *CGFetcher) GetGeneralInfo(coinID string) (*tomochain.TokenGeneralInfo, error) {
 	url := fmt.Sprintf("%s/coins/%s?tickers=false&community_data=false&developer_data=false&sparkline=false", self.API, coinID)
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
-	tokenItem := ethereum.TokenInfoCoinGecko{}
+	tokenItem := tomochain.TokenInfoCoinGecko{}
 	err = json.Unmarshal(b, &tokenItem)
 	if err != nil {
 		log.Print(err)

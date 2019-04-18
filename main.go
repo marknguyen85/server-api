@@ -17,7 +17,7 @@ import (
 type fetcherFunc func(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher)
 
 func enableLogToFile() (*os.File, error) {
-	const logFileName = "error.log"
+	const logFileName = "log/error.log"
 	f, err := os.OpenFile(logFileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, err
@@ -46,9 +46,10 @@ func main() {
 		defer f.Close()
 	}
 
-	kyberENV := os.Getenv("KYBER_ENV")
+	kyberENV := os.Getenv("CHAINTEX_ENV")
 	persisterIns, _ := persister.NewPersister("ram")
 	boltIns, err := persister.NewBoltStorage()
+	// boltIns, err := persister.NewInfluxStorage()
 	if err != nil {
 		log.Println("cannot init db: ", err.Error())
 	}
@@ -71,7 +72,7 @@ func main() {
 	}()
 	var (
 		initRate  []ethereum.Rate
-		ethSymbol = common.ETHSymbol
+		ethSymbol = common.TOMOSymbol
 	)
 	for symbol := range fertcherIns.GetListToken() {
 		if symbol == ethSymbol {
@@ -190,7 +191,7 @@ func fetchKyberEnabled(persister persister.Persister, boltIns persister.BoltInte
 	persister.SaveKyberEnabled(enabled)
 }
 
-func fetchRateUSD(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher) {
+func fetchRateUSD(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher, ) {
 	rateUSD, err := fetcher.GetRateUsdEther()
 	if err != nil {
 		log.Print(err)
@@ -301,7 +302,7 @@ func fetchRateWithFallback(persister persister.Persister, boltIns persister.Bolt
 		keyRate := fmt.Sprintf("%s_%s", cr.Source, cr.Dest)
 		if r, ok := mapRate[keyRate]; ok {
 			result = append(result, r)
-			if keyRate != "ETH_ETH" {
+			if keyRate != "TOMO_TOMO" {
 				delete(mapRate, keyRate)
 			}
 		} else {

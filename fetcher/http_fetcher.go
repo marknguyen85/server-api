@@ -8,7 +8,7 @@ import (
 	"math/big"
 
 	"github.com/ChainTex/server-go/common"
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/ChainTex/server-go/tomochain"
 	fCommon "github.com/ChainTex/server-go/fetcher/fetcher-common"
 )
 
@@ -31,13 +31,13 @@ func NewHTTPFetcher(tradingAPIEndpoint, gasStationEndpoint, apiEndpoint string) 
 	}
 }
 
-func (self *HTTPFetcher) GetListToken() ([]ethereum.Token, error) {
+func (self *HTTPFetcher) GetListToken() ([]tomochain.Token, error) {
 	b, err := fCommon.HTTPCall(self.tradingAPIEndpoint)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
-	var result ethereum.TokenConfig
+	var result tomochain.TokenConfig
 	err = json.Unmarshal(b, &result)
 	if err != nil {
 		log.Print(err)
@@ -61,7 +61,7 @@ type GasStation struct {
 	Low      float64 `json:"safeLow"`
 }
 
-func (self *HTTPFetcher) GetGasPrice() (*ethereum.GasPrice, error) {
+func (self *HTTPFetcher) GetGasPrice() (*tomochain.GasPrice, error) {
 	b, err := fCommon.HTTPCall(self.gasStationEndPoint)
 	if err != nil {
 		log.Print(err)
@@ -79,21 +79,21 @@ func (self *HTTPFetcher) GetGasPrice() (*ethereum.GasPrice, error) {
 	low := big.NewFloat(gasPrice.Low / 10)
 	defaultGas := standard
 
-	return &ethereum.GasPrice{
+	return &tomochain.GasPrice{
 		fast.String(), standard.String(), low.String(), defaultGas.String(),
 	}, nil
 }
 
 // get data from tracker.kyber
 
-func (self *HTTPFetcher) GetRate7dData() (map[string]*ethereum.Rates, error) {
+func (self *HTTPFetcher) GetRate7dData() (map[string]*tomochain.Rates, error) {
 	trackerAPI := self.apiEndpoint + "/rates7d"
 	b, err := fCommon.HTTPCall(trackerAPI)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
-	trackerData := map[string]*ethereum.Rates{}
+	trackerData := map[string]*tomochain.Rates{}
 	err = json.Unmarshal(b, &trackerData)
 	if err != nil {
 		log.Print(err)
@@ -145,7 +145,7 @@ func (self *HTTPFetcher) GetRateUsdEther() (string, error) {
 		return ethPrice, errors.New("cannot get token price from api")
 	}
 	for _, v := range tokenPrice.Data {
-		if v.Symbol == common.ETHSymbol {
+		if v.Symbol == common.TOMOSymbol {
 			ethPrice = fmt.Sprintf("%.6f", v.Price)
 			break
 		}

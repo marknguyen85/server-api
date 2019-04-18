@@ -1,4 +1,4 @@
-# Cached server for KYBER wallet
+# Cached server for ChainTeX wallet
 
 ## Build
 
@@ -24,9 +24,9 @@ docker-compose -f docker-compose-staging.yml up --build
  - /getMaxGasPrice: get max GasPrice from contract
  - /getGasPrice: return gasPrice get from https://ethgasstation.info/
  - /getRightMarketInfo: return market info (volume, marketcap, ...) from Coingecko
- - /getLast7D: ```params: listToken=KNC-DAI-...``` return last 7 days mid price (base on ETH) of token in listToken
+ - /getLast7D: ```params: listToken=KNC-DAI-...``` return last 7 days mid price (base on TOMO) of token in listToken
   param listToken is created by linking tokens (token's symbol in uppercase) with "-"
- - /getRateETH: return USD price of ETH from Coingecko
+ - /getRateTOMO: return USD price of TOMO from Coingecko
 
 ## New APIs
 
@@ -37,9 +37,9 @@ docker-compose -f docker-compose-staging.yml up --build
  - /maxGasPrice: get max GasPrice from contract
  - /gasPrice: return gasPrice get from https://ethgasstation.info/
  - /marketInfo: return market info (volume, marketcap, ...) from Coingecko
- - /last7D: ```params: listToken=KNC-DAI-...``` return last 7 days mid price (base on ETH) of token in listToken
+ - /last7D: ```params: listToken=KNC-DAI-...``` return last 7 days mid price (base on TOMO) of token in listToken
   param listToken is created by linking tokens (token's symbol in uppercase) with "-"
- - /rateETH: return USD price of ETH from Coingecko
+ - /rateTOMO: return USD price of TOMO from Coingecko
  - /users: ```params: address=0x2262d4f6312805851e3b27c40db2c7282e6e4a42``` return user stats info
  
 ## Cache version
@@ -68,7 +68,7 @@ Response:
 {
     "data": [
         {
-            "symbol": "ETH",
+            "symbol": "TOMO",
             "price_usd": "150.110255"
         }
     ],
@@ -87,13 +87,13 @@ Response:
     "data": [
         {
             "source": "POWR",
-            "dest": "ETH",
+            "dest": "TOMO",
             "rate": "580350000000000",
             "minRate": "562939500000000"
         },
         {
             "source": "REQ",
-            "dest": "ETH",
+            "dest": "TOMO",
             "rate": "251549999999999",
             "minRate": "244003499999999"
         }
@@ -159,7 +159,7 @@ Response:
             "rate": 0.000041852212356469,
             "change_24h": "-0.394025094063878",
             "quotes": {
-                "ETH": {
+                "TOMO": {
                     "market_cap": 10157.605967244439,
                     "volume_24h": 851.7915794548644
                 },
@@ -173,7 +173,7 @@ Response:
             "rate": 0.000847373339761277,
             "change_24h": "-2.68156999862817",
             "quotes": {
-                "ETH": {
+                "TOMO": {
                     "market_cap": 70549.85998080991,
                     "volume_24h": 7525.880561645942
                 },
@@ -192,7 +192,7 @@ Response:
 ### 8. Get last7D
 `/last7D`
 
-(GET) Return last 7 days mid price (base on ETH) of token in listToken param
+(GET) Return last 7 days mid price (base on TOMO) of token in listToken param
 
 Input Request Parameters
 
@@ -275,9 +275,9 @@ Response:
 ```
 
 ### 9. Get gasPrice
-`/rateETH`
+`/rateTOMO`
 
-(GET) Return USD price of ETH from Coingecko
+(GET) Return USD price of TOMO from Coingecko
 
 Response:
 ```javascript

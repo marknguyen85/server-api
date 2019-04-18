@@ -1,12 +1,30 @@
 version: "3"
 services:
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - "./db/grafana:/var/lib/grafana"
+    restart: always
+  influx-db:
+    build:
+      context: .
+      dockerfile: Db.Dockerfile
+    env_file:
+      - env_testnet.env
+    volumes:
+      - "./db/influxdb:/var/lib/influxdb"
+      # - "./influxdb.conf:/etc/influxdb/influxdb.conf:ro"
+    ports:
+      - "8086:8086"
+    # restart: always
   cached:
     build: ./
-    image: cached
-    container_name: cached
     env_file:
-      - common.env
+      - env_testnet.env
     ports:
       - "3001:3001"
     volumes:
       - "./db:/go/src/github.com/ChainTex/server-go/persister/db"
+      - "./log:/go/src/github.com/ChainTex/server-go/log"

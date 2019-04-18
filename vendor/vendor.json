@@ -15,66 +15,6 @@
 			"revisionTime": "2018-01-18T20:34:23Z"
 		},
 		{
-			"checksumSHA1": "M8yY3/l/xvwSd7MOCCp/y+IIlTk=",
-			"path": "github.com/ethereum/go-ethereum/accounts/abi",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "l56vURlq/wfKmKmT6ftqlllDH/w=",
-			"path": "github.com/ethereum/go-ethereum/common",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "tMtGtURWx29lWZYsLtLOQaPvGqs=",
-			"path": "github.com/ethereum/go-ethereum/common/hexutil",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "Hd1Y5DkzYULQzJlSgYv2w5SiEAo=",
-			"path": "github.com/ethereum/go-ethereum/common/math",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "PSx8ACgC3L7WzkPZfHJkukAuMEs=",
-			"path": "github.com/ethereum/go-ethereum/crypto",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "LS/Qn4CAVXw3zDAiURIS9LIvKxg=",
-			"path": "github.com/ethereum/go-ethereum/crypto/secp256k1",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "pQzUVRi0z/3Z4FpRyExSg1ROLSA=",
-			"path": "github.com/ethereum/go-ethereum/crypto/sha3",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "jYu7qwMf5Hc47JdZFx9aZPg9x3A=",
-			"path": "github.com/ethereum/go-ethereum/log",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "f2Asra5yXCMDxwx/TF6m4h3ZqOw=",
-			"path": "github.com/ethereum/go-ethereum/rlp",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
-			"checksumSHA1": "bLQ+Hw/+Lxrg/seH3s+EvX2c1gQ=",
-			"path": "github.com/ethereum/go-ethereum/rpc",
-			"revision": "722bac84fa503199b9c485c1a3e2bfba03bc487d",
-			"revisionTime": "2018-01-26T17:32:43Z"
-		},
-		{
 			"checksumSHA1": "mlrXH+qt8FPQ0p+bEm4o1RKH/gk=",
 			"path": "github.com/getsentry/raven-go",
 			"revision": "563b81fc02b75d664e54da31f787c2cc2186780b",

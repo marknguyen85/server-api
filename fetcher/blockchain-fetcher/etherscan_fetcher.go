@@ -5,9 +5,9 @@ import (
 	"errors"
 	"log"
 
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/ChainTex/server-go/tomochain"
 	fCommon "github.com/ChainTex/server-go/fetcher/fetcher-common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/tomochain/tomochain/common/hexutil"
 )
 
 // api_key for tracker.kyber
@@ -22,7 +22,7 @@ type Etherscan struct {
 }
 
 type ResultEvent struct {
-	Result []ethereum.EventRaw `json:"result"`
+	Result []tomochain.EventRaw `json:"result"`
 }
 
 func NewEtherScan(typeName string, url string, apiKey string) (*Etherscan, error) {
@@ -40,7 +40,7 @@ func (self *Etherscan) EthCall(to string, data string) (string, error) {
 		log.Print(err)
 		return "", err
 	}
-	result := ethereum.ResultRpc{}
+	result := tomochain.ResultRpc{}
 	err = json.Unmarshal(b, &result)
 	if err != nil {
 		log.Print(err)
@@ -62,7 +62,7 @@ func (self *Etherscan) GetLatestBlock() (string, error) {
 		log.Print(err)
 		return "", err
 	}
-	blockNum := ethereum.ResultRpc{}
+	blockNum := tomochain.ResultRpc{}
 	err = json.Unmarshal(b, &blockNum)
 	if err != nil {
 		return "", err
@@ -74,7 +74,7 @@ func (self *Etherscan) GetLatestBlock() (string, error) {
 	return num.String(), nil
 }
 
-// func (self *Etherscan) GetEvents(fromBlock string, toBlock string, network string, tradeTopic string) (*[]ethereum.EventRaw, error) {
+// func (self *Etherscan) GetEvents(fromBlock string, toBlock string, network string, tradeTopic string) (*[]tomochain.EventRaw, error) {
 // 	url := self.url + "/api?module=logs&action=getLogs&fromBlock=" +
 // 		fromBlock + "&toBlock=" + toBlock + "&address=" + network + "&topic0=" +
 // 		tradeTopic + "&apikey=" + self.apiKey

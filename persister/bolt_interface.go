@@ -1,8 +1,8 @@
 package persister
 
-import "github.com/ChainTex/server-go/ethereum"
+import "github.com/ChainTex/server-go/tomochain"
 
 type BoltInterface interface {
-	StoreGeneralInfo(map[string]*ethereum.TokenGeneralInfo) error
-	GetGeneralInfo(map[string]ethereum.Token) (map[string]*ethereum.TokenGeneralInfo, error)
+	StoreGeneralInfo(map[string]*tomochain.TokenGeneralInfo) error
+	GetGeneralInfo(map[string]tomochain.Token) (map[string]*tomochain.TokenGeneralInfo, error)
 }

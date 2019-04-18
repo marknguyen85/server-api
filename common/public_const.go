@@ -1,8 +1,8 @@
 package common
 
 const (
-	// ETHAddr ethereum address
-	ETHAddr = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-	// ETHSymbol ethereum symbol
-	ETHSymbol = "ETH"
+	// TOMOAddr ethereum address
+	TOMOAddr = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+	// TOMOSymbol ethereum symbol
+	TOMOSymbol = "TOMO"
 )

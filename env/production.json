@@ -33,8 +33,8 @@
   
   "tokens": [
     {
-      "name": "Ethereum",
-      "symbol": "ETH",
+      "name": "TomoChain",
+      "symbol": "TOMO",
       "icon": "eth.svg",
       "address": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       "decimals": 18,

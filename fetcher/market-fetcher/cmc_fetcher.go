@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/ChainTex/server-go/tomochain"
 	fCommon "github.com/ChainTex/server-go/fetcher/fetcher-common"
 )
 
@@ -25,13 +25,13 @@ func NewCMCFetcher() *CMCFetcher {
 
 func (self *CMCFetcher) GetRateUsdEther() (string, error) {
 	// typeMarket := self.typeMarket
-	url := self.APIV1 + "/ticker/ethereum"
+	url := self.APIV1 + "/ticker/tomochain"
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
 		return "", err
 	}
-	rateItem := make([]ethereum.RateUSD, 0)
+	rateItem := make([]tomochain.RateUSD, 0)
 	err = json.Unmarshal(b, &rateItem)
 	if err != nil {
 		log.Print(err)
@@ -40,14 +40,14 @@ func (self *CMCFetcher) GetRateUsdEther() (string, error) {
 	return rateItem[0].PriceUsd, nil
 }
 
-func (self *CMCFetcher) GetGeneralInfo(usdId string) (*ethereum.TokenGeneralInfo, error) {
-	url := self.APIV2 + "/ticker/" + usdId + "/?convert=ETH"
+func (self *CMCFetcher) GetGeneralInfo(usdId string) (*tomochain.TokenGeneralInfo, error) {
+	url := self.APIV2 + "/ticker/" + usdId + "/?convert=TOMO"
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
-	tokenItem := map[string]ethereum.TokenGeneralInfo{}
+	tokenItem := map[string]tomochain.TokenGeneralInfo{}
 	err = json.Unmarshal(b, &tokenItem)
 	if err != nil {
 		log.Print(err)
@@ -55,7 +55,7 @@ func (self *CMCFetcher) GetGeneralInfo(usdId string) (*ethereum.TokenGeneralInfo
 	}
 
 	if data, ok := tokenItem["data"]; ok {
-		data.MarketCap = data.Quotes["ETH"].MarketCap
+		data.MarketCap = data.Quotes["TOMO"].MarketCap
 		return &data, nil
 	}
 	err = errors.New("Cannot find data key in return quotes of ticker")

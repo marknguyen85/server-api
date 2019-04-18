@@ -12,9 +12,9 @@
     "history_endpoint": "https://cache.kyber.network",
     "api_usd":"https://api.coinmarketcap.com",
     "tokens": {
-      "ETH": {
-        "name": "Ethereum",
-        "symbol": "ETH",
+      "TOMO": {
+        "name": "TomoChain",
+        "symbol": "TOMO",
         "icon": "eth.svg",
         "address": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
         "decimal": 18,

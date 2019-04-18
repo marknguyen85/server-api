@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/ChainTex/server-go/tomochain"
 	"github.com/boltdb/bolt"
 )
 
@@ -39,7 +39,7 @@ func NewBoltStorage() (*BoltStorage, error) {
 }
 
 // StoreGeneralInfo store market info
-func (bs *BoltStorage) StoreGeneralInfo(mapInfo map[string]*ethereum.TokenGeneralInfo) error {
+func (bs *BoltStorage) StoreGeneralInfo(mapInfo map[string]*tomochain.TokenGeneralInfo) error {
 	var err error
 	err = bs.marketDB.Update(func(tx *bolt.Tx) error {
 		var errS error
@@ -65,14 +65,14 @@ func (bs *BoltStorage) StoreGeneralInfo(mapInfo map[string]*ethereum.TokenGenera
 }
 
 // GetGeneralInfo store market info
-func (bs *BoltStorage) GetGeneralInfo(mapToken map[string]ethereum.Token) (map[string]*ethereum.TokenGeneralInfo, error) {
+func (bs *BoltStorage) GetGeneralInfo(mapToken map[string]tomochain.Token) (map[string]*tomochain.TokenGeneralInfo, error) {
 	var err error
-	result := make(map[string]*ethereum.TokenGeneralInfo)
+	result := make(map[string]*tomochain.TokenGeneralInfo)
 	err = bs.marketDB.View(func(tx *bolt.Tx) error {
 		var errV error
 		b := tx.Bucket([]byte(bucket))
 		if errV = b.ForEach(func(k, v []byte) error {
-			var tokenInfo ethereum.TokenGeneralInfo
+			var tokenInfo tomochain.TokenGeneralInfo
 			errLoop := json.Unmarshal(v, &tokenInfo)
 			if errLoop != nil {
 				return errLoop

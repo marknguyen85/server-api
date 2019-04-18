@@ -1,28 +1,8 @@
 package persister
 
 import (
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/ChainTex/server-go/tomochain"
 )
-
-// type Rate struct {
-// 	Source   string `json:"source"`
-// 	Dest     string `json:"dest"`
-// 	Rate     string `json:"rate"`
-// 	Minrate  string `json:"minRate"`
-// }
-
-// type EventHistory struct {
-// 	ID               int    `json:"id"`
-// 	ActualDestAmount string `json:"actualDestAmount"`
-// 	ActualSrcAmount  string `json:"actualSrcAmount"`
-// 	Dest             string `json:"dest"`
-// 	Source           string `json:"source"`
-// 	Sender           string `json:"sender"`
-// 	Blocknumber      string `json:"blockNumber"`
-// 	Txhash           string `json:"txHash"`
-// 	Timestamp        string `json:"timestamp"`
-// 	Status           string `json:"status"`
-// }
 
 type RateUSD struct {
 	Symbol   string `json:"symbol"`
@@ -30,15 +10,15 @@ type RateUSD struct {
 }
 
 type Persister interface {
-	GetRate() []ethereum.Rate
+	GetRate() []tomochain.Rate
 	GetIsNewRate() bool
 	SetIsNewRate(bool)
 	GetTimeUpdateRate() int64
 
-	SaveRate([]ethereum.Rate, int64)
+	SaveRate([]tomochain.Rate, int64)
 
-	SaveGeneralInfoTokens(map[string]*ethereum.TokenGeneralInfo)
-	GetTokenInfo() map[string]*ethereum.TokenGeneralInfo
+	SaveGeneralInfoTokens(map[string]*tomochain.TokenGeneralInfo)
+	GetTokenInfo() map[string]*tomochain.TokenGeneralInfo
 
 	GetLatestBlock() string
 	GetIsNewLatestBlock() bool
@@ -46,13 +26,13 @@ type Persister interface {
 	SetNewLatestBlock(bool)
 
 	GetRateUSD() []RateUSD
-	GetRateETH() string
+	GetRateTOMO() string
 	GetIsNewRateUSD() bool
 	SaveRateUSD(string) error
 	SetNewRateUSD(bool)
 
 	// GetRateUSDCG() []RateUSD
-	// GetRateETHCG() string
+	// GetRateTOMOCG() string
 	// SetNewRateUSDCG(bool)
 	// GetIsNewRateUSDCG() bool
 
@@ -66,14 +46,14 @@ type Persister interface {
 	GetMaxGasPrice() string
 	GetNewMaxGasPrice() bool
 
-	SaveGasPrice(*ethereum.GasPrice)
+	SaveGasPrice(*tomochain.GasPrice)
 	SetNewGasPrice(bool)
-	GetGasPrice() *ethereum.GasPrice
+	GetGasPrice() *tomochain.GasPrice
 	GetNewGasPrice() bool
 
-	SaveMarketData(rates map[string]*ethereum.Rates, mapTokenInfo map[string]*ethereum.TokenGeneralInfo, tokens map[string]ethereum.Token)
-	GetRightMarketData() map[string]*ethereum.RightMarketInfo
-	// GetRightMarketDataCG() map[string]*ethereum.RightMarketInfo
+	SaveMarketData(rates map[string]*tomochain.Rates, mapTokenInfo map[string]*tomochain.TokenGeneralInfo, tokens map[string]tomochain.Token)
+	GetRightMarketData() map[string]*tomochain.RightMarketInfo
+	// GetRightMarketDataCG() map[string]*tomochain.RightMarketInfo
 	GetLast7D(listTokens string) map[string][]float64
 	GetIsNewTrackerData() bool
 	SetIsNewTrackerData(isNewTrackerData bool)

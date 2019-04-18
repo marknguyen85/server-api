@@ -41,11 +41,11 @@ type RamPersister struct {
 	isNewLatestBlock bool
 
 	rateUSD      []RateUSD
-	rateETH      string
+	rateTOMO      string
 	isNewRateUsd bool
 
 	// rateUSDCG      []RateUSD
-	// rateETHCG      string
+	// rateTOMOCG      string
 	// isNewRateUsdCG bool
 
 	events     []ethereum.EventHistory
@@ -93,10 +93,10 @@ func NewRamPersister() (*RamPersister, error) {
 	isNewLatestBlock := true
 
 	rateUSD := make([]RateUSD, 0)
-	rateETH := "0"
+	rateTOMO := "0"
 	isNewRateUsd := true
 	// rateUSDCG := make([]RateUSD, 0)
-	// rateETHCG := "0"
+	// rateTOMOCG := "0"
 	// isNewRateUsdCG := true
 
 	events := make([]ethereum.EventHistory, 0)
@@ -136,10 +136,10 @@ func NewRamPersister() (*RamPersister, error) {
 		latestBlock:       latestBlock,
 		isNewLatestBlock:  isNewLatestBlock,
 		rateUSD:           rateUSD,
-		rateETH:           rateETH,
+		rateTOMO:           rateTOMO,
 		isNewRateUsd:      isNewRateUsd,
 		// rateUSDCG:         rateUSDCG,
-		// rateETHCG:         rateETHCG,
+		// rateTOMOCG:         rateTOMOCG,
 		// isNewRateUsdCG:    isNewRateUsdCG,
 		events:           events,
 		isNewEvent:       isNewEvent,
@@ -304,16 +304,16 @@ func (self *RamPersister) GetRateUSD() []RateUSD {
 // 	return self.rateUSDCG
 // }
 
-func (self *RamPersister) GetRateETH() string {
+func (self *RamPersister) GetRateTOMO() string {
 	self.mu.RLock()
 	defer self.mu.RUnlock()
-	return self.rateETH
+	return self.rateTOMO
 }
 
-// func (self *RamPersister) GetRateETHCG() string {
+// func (self *RamPersister) GetRateTOMOCG() string {
 // 	self.mu.RLock()
 // 	defer self.mu.RUnlock()
-// 	return self.rateETHCG
+// 	return self.rateTOMOCG
 // }
 
 func (self *RamPersister) GetIsNewRateUSD() bool {
@@ -335,12 +335,12 @@ func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 	rates := make([]RateUSD, 0)
 	// ratesCG := make([]RateUSD, 0)
 
-	itemRateEth := RateUSD{Symbol: "ETH", PriceUsd: rateUSDEth}
-	// itemRateEthCG := RateUSD{Symbol: "ETH", PriceUsd: rateUSDEthCG}
+	itemRateEth := RateUSD{Symbol: "TOMO", PriceUsd: rateUSDEth}
+	// itemRateEthCG := RateUSD{Symbol: "TOMO", PriceUsd: rateUSDEthCG}
 	rates = append(rates, itemRateEth)
 	// ratesCG = append(ratesCG, itemRateEthCG)
 	for _, item := range self.rates {
-		if item.Source != "ETH" {
+		if item.Source != "TOMO" {
 			priceUsd, err := CalculateRateUSD(item.Rate, rateUSDEth)
 			if err != nil {
 				log.Print(err)
@@ -354,7 +354,7 @@ func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 			// 	return nil
 			// }
 			sourceSymbol := item.Source
-			if sourceSymbol == "ETHOS" {
+			if sourceSymbol == "TOMOOS" {
 				sourceSymbol = "BQX"
 			}
 			itemRate := RateUSD{Symbol: sourceSymbol, PriceUsd: priceUsd}
@@ -367,11 +367,11 @@ func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 	}
 
 	self.rateUSD = rates
-	self.rateETH = rateUSDEth
+	self.rateTOMO = rateUSDEth
 	self.isNewRateUsd = true
 
 	// self.rateUSDCG = ratesCG
-	// self.rateETHCG = rateUSDEthCG
+	// self.rateTOMOCG = rateUSDEthCG
 	// self.isNewRateUsdCG = true
 
 	return nil

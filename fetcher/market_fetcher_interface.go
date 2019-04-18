@@ -1,13 +1,13 @@
 package fetcher
 
 import (
-	"github.com/ChainTex/server-go/ethereum"
+	"github.com/ChainTex/server-go/tomochain"
 	mFetcher "github.com/ChainTex/server-go/fetcher/market-fetcher"
 )
 
 type MarketFetcherInterface interface {
 	GetRateUsdEther() (string, error)
-	GetGeneralInfo(string) (*ethereum.TokenGeneralInfo, error)
+	GetGeneralInfo(string) (*tomochain.TokenGeneralInfo, error)
 	// GetTypeMarket() string
 }
 

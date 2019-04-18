@@ -86,7 +86,7 @@ type TokenGeneralInfo struct {
 }
 
 type CurrencyData struct {
-	ETH float64 `json:"eth"`
+	TOMO float64 `json:"eth"`
 	USD float64 `json:"usd"`
 }
 
@@ -100,9 +100,9 @@ type TokenInfoCoinGecko struct {
 
 func (tokenInfo TokenInfoCoinGecko) ToTokenInfoCMC() TokenGeneralInfo {
 	quotes := make(map[string]QuoInfo)
-	quotes["ETH"] = QuoInfo{
-		MarketCap: tokenInfo.MarketData.MarketCap.ETH,
-		Volume24h: tokenInfo.MarketData.Volume24H.ETH,
+	quotes["TOMO"] = QuoInfo{
+		MarketCap: tokenInfo.MarketData.MarketCap.TOMO,
+		Volume24h: tokenInfo.MarketData.Volume24H.TOMO,
 	}
 	quotes["USD"] = QuoInfo{
 		MarketCap: tokenInfo.MarketData.MarketCap.USD,

@@ -74,7 +74,7 @@ func (self *HTTPServer) GetRateUSD(c *gin.Context) {
 	)
 }
 
-func (self *HTTPServer) GetRateETH(c *gin.Context) {
+func (self *HTTPServer) GetRateTOMO(c *gin.Context) {
 	if !self.persister.GetIsNewRateUSD() {
 		c.JSON(
 			http.StatusOK,
@@ -83,7 +83,7 @@ func (self *HTTPServer) GetRateETH(c *gin.Context) {
 		return
 	}
 
-	ethRate := self.persister.GetRateETH()
+	ethRate := self.persister.GetRateTOMO()
 	c.JSON(
 		http.StatusOK,
 		gin.H{"success": true, "data": ethRate},
@@ -233,8 +233,8 @@ func (self *HTTPServer) Run(kyberENV string) {
 	self.r.GET("/getLast7D", self.GetLast7D)
 	self.r.GET("/last7D", self.GetLast7D)
 
-	self.r.GET("/getRateETH", self.GetRateETH)
-	self.r.GET("/rateETH", self.GetRateETH)
+	self.r.GET("/getRateTOMO", self.GetRateTOMO)
+	self.r.GET("/rateTOMO", self.GetRateTOMO)
 
 	self.r.GET("/cacheVersion", self.getCacheVersion)
 

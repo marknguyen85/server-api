@@ -11,7 +11,7 @@ RUN apt-get update && \
 COPY --from=build-env /go/bin/server-go /wallet-cache
 COPY --from=build-env /go/src/github.com/ChainTex/server-go/env/ /env/
 ENV GIN_MODE release
-ENV KYBER_ENV production
+ENV CHAINTEX_ENV production
 ENV LOG_TO_STDOUT true
 EXPOSE 3001
 CMD ["/wallet-cache"]
