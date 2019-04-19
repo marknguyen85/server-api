@@ -15,7 +15,7 @@ ADD . $GOPATH/src/github.com/marknguyen85/server-api
 
 # should be able to build now
 WORKDIR $GOPATH/src/github.com/marknguyen85/server-api 
-RUN go build -o server . 
+RUN go build -o server .
 CMD ["/go/src/github.com/marknguyen85/server-api/server"]
 
 

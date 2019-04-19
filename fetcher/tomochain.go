@@ -47,11 +47,11 @@ func NewTomoChain(network string, networkAbiStr string, tradeTopic string, wrapp
 		return nil, err
 	}
 
-	tomochain := &TomoChain{
+	tomochain := &TomoChain{
 		network, networkAbi, tradeTopic, wrapper, wrapperAbi, averageBlockTime,
 	}
 
-	return tomochain, nil
+	return tomochain, nil
 }
 
 func getOrAmount(amount *big.Int) *big.Int {
@@ -145,8 +145,8 @@ func (self *TomoChain) ExtractMaxGasPrice(result string) (string, error) {
 	return gasPrice.String(), nil
 }
 
-func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol string) (tomochain.Rate, error) {
-	var rate tomochain.Rate
+func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol string) (tomochain.Rate, error) {
+	var rate tomochain.Rate
 	rateByte, err := hexutil.Decode(result)
 	if err != nil {
 		log.Print(err)
@@ -159,7 +159,7 @@ func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol s
 		return rate, err
 	}
 
-	return tomochain.Rate{
+	return tomochain.Rate{
 		Source:  sourceSymbol,
 		Dest:    destSymbol,
 		Rate:    rateNetwork.ExpectedRate.String(),
@@ -167,7 +167,7 @@ func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol s
 	}, nil
 }
 
-func (self *TomoChain) ExtractRateDataWrapper(result string, sourceArr, destAddr []string) ([]tomochain.Rate, error) {
+func (self *TomoChain) ExtractRateDataWrapper(result string, sourceArr, destAddr []string) ([]tomochain.Rate, error) {
 	rateByte, err := hexutil.Decode(result)
 	if err != nil {
 		log.Print(err)
@@ -187,20 +187,20 @@ func (self *TomoChain) ExtractRateDataWrapper(result string, sourceArr, destAddr
 		return nil, errorLength
 	}
 
-	rateReturn := make([]tomochain.Rate, 0)
+	rateReturn := make([]tomochain.Rate, 0)
 	for i := 0; i < lenArr; i++ {
 		source := sourceArr[i]
 		dest := destAddr[i]
 		rate := rateWapper.ExpectedRate[i]
 		minRate := rateWapper.SlippageRate[i]
-		rateReturn = append(rateReturn, tomochain.Rate{
+		rateReturn = append(rateReturn, tomochain.Rate{
 			source, dest, rate.String(), minRate.String(),
 		})
 	}
 	return rateReturn, nil
 }
 
-func (self *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRaw, latestBlock string) (*[]tomochain.EventHistory, error) {
+func (self *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRaw, latestBlock string) (*[]tomochain.EventHistory, error) {
 	//get latestBlock to calculate timestamp
 	events, err := self.ReadEvents(eventRaw, "node", latestBlock)
 	if err != nil {
@@ -210,7 +210,7 @@ func (self *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRa
 	return events, nil
 }
 
-func (self *TomoChain) ReadEventsWithTimeStamp(eventRaw *[]tomochain.EventRaw) (*[]tomochain.EventHistory, error) {
+func (self *TomoChain) ReadEventsWithTimeStamp(eventRaw *[]tomochain.EventRaw) (*[]tomochain.EventHistory, error) {
 	//get latestBlock to calculate timestamp
 	events, err := self.ReadEvents(eventRaw, "etherscan", "0")
 	if err != nil {
@@ -227,7 +227,7 @@ type LogData struct {
 	ActualDestAmount *big.Int       `json:"actualDestAmount"`
 }
 
-func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch string, latestBlock string) (*[]tomochain.EventHistory, error) {
+func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch string, latestBlock string) (*[]tomochain.EventHistory, error) {
 	listEvent := *listEventAddr
 	endIndex := len(listEvent) - 1
 	// var beginIndex = 0
@@ -236,7 +236,7 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFet
 	// }
 
 	index := 0
-	events := make([]tomochain.EventHistory, 0)
+	events := make([]tomochain.EventHistory, 0)
 	for i := endIndex; i >= 0; i-- {
 		if index >= 5 {
 			break
@@ -294,7 +294,7 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFet
 		dest := logData.Dest.String()
 		source := logData.Source.String()
 
-		events = append(events, tomochain.EventHistory{
+		events = append(events, tomochain.EventHistory{
 			actualDestAmount, actualSrcAmount, dest, source, blockNumber.String(), txHash, timestamp,
 		})
 		index++
@@ -302,7 +302,7 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFet
 	return &events, nil
 }
 
-func (self *TomoChain) IsSmallAmount(eventRaw tomochain.EventRaw) (bool, error) {
+func (self *TomoChain) IsSmallAmount(eventRaw tomochain.EventRaw) (bool, error) {
 	data, err := hexutil.Decode(eventRaw.Data)
 	if err != nil {
 		log.Print(err)

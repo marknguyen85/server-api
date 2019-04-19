@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/marknguyen85/server-api/tomochain"
 	fCommon "github.com/marknguyen85/server-api/fetcher/fetcher-common"
+	"github.com/marknguyen85/server-api/tomochain"
 )
 
 type CGFetcher struct {

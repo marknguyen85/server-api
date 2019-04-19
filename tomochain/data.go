@@ -1,4 +1,4 @@
-package tomochain
+package tomochain
 
 // const (
 // 	TIME_TO_DELETE = 18000
@@ -87,7 +87,7 @@ type TokenGeneralInfo struct {
 
 type CurrencyData struct {
 	TOMO float64 `json:"eth"`
-	USD float64 `json:"usd"`
+	USD  float64 `json:"usd"`
 }
 
 type TokenInfoCoinGecko struct {

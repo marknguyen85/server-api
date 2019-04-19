@@ -20,3 +20,5 @@
 .idea/
 
 db/
+
+vendor/ 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/marknguyen85/server-api/tomochain"
 	"github.com/boltdb/bolt"
+	"github.com/marknguyen85/server-api/tomochain"
 )
 
 const (
