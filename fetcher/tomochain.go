@@ -212,7 +212,7 @@ func (self *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRaw,
 
 func (self *TomoChain) ReadEventsWithTimeStamp(eventRaw *[]tomochain.EventRaw) (*[]tomochain.EventHistory, error) {
 	//get latestBlock to calculate timestamp
-	events, err := self.ReadEvents(eventRaw, "etherscan", "0")
+	events, err := self.ReadEvents(eventRaw, "tomoscan", "0")
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -260,7 +260,7 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch
 		}
 
 		var timestamp string
-		if typeFetch == "etherscan" {
+		if typeFetch == "tomoscan" {
 			timestampHex, err := hexutil.DecodeBig(listEvent[i].Timestamp)
 			if err != nil {
 				log.Print(err)

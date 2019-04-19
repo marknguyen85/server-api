@@ -86,7 +86,7 @@ type TokenGeneralInfo struct {
 }
 
 type CurrencyData struct {
-	TOMO float64 `json:"eth"`
+	TOMO float64 `json:"tomo"`
 	USD  float64 `json:"usd"`
 }
 

@@ -8,8 +8,8 @@ import (
 	"math/big"
 
 	"github.com/marknguyen85/server-api/common"
-	"github.com/marknguyen85/server-api/tomochain"
 	fCommon "github.com/marknguyen85/server-api/fetcher/fetcher-common"
+	"github.com/marknguyen85/server-api/tomochain"
 )
 
 const (
@@ -52,6 +52,8 @@ func (self *HTTPFetcher) GetListToken() ([]tomochain.Token, error) {
 		err = errors.New("list token from api is empty")
 		return nil, err
 	}
+	log.Printf("================GetListToken", self.tradingAPIEndpoint)
+	log.Printf("================GetListToken", data)
 	return data, nil
 }
 

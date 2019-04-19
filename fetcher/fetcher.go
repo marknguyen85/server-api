@@ -19,7 +19,7 @@ import (
 const (
 	TOMO_TO_WEI = 1000000000000000000
 	MIN_TOMO    = 0.1
-	KEY        = "kybersecret"
+	KEY         = "kybersecret"
 
 	timeW8Req = 500
 )
@@ -32,10 +32,10 @@ type Connection struct {
 
 type InfoData struct {
 	mu             *sync.RWMutex
-	ApiUsd         string              `json:"api_usd"`
-	CoinMarket     []string            `json:"coin_market"`
+	ApiUsd         string               `json:"api_usd"`
+	CoinMarket     []string             `json:"coin_market"`
 	TokenAPI       []tomochain.TokenAPI `json:"tokens"`
-	CanDeleteToken []string            `json:"can_delete"`
+	CanDeleteToken []string             `json:"can_delete"`
 
 	Tokens        map[string]tomochain.Token
 	BackupTokens  map[string]tomochain.Token
@@ -105,9 +105,9 @@ func (self *InfoData) GetListTokenPriority() map[string]tomochain.Token {
 }
 
 type Fetcher struct {
-	info     *InfoData
+	info      *InfoData
 	tomochain *TomoChain
-	fetIns   []FetcherInterface
+	fetIns    []FetcherInterface
 	// fetNormalIns []FetcherNormalInterface
 	marketFetIns MarketFetcherInterface
 	httpFetcher  *HTTPFetcher
@@ -118,18 +118,11 @@ func (self *Fetcher) GetNumTokens() int {
 	return len(listTokens)
 }
 
-func NewFetcher(kyberENV string) (*Fetcher, error) {
+func NewFetcher(chainTexENV string) (*Fetcher, error) {
 	var file []byte
 	var err error
-
-	switch kyberENV {
-	case "semi_production":
-		file, err = ioutil.ReadFile("env/semi_production.json")
-		if err != nil {
-			log.Print(err)
-			return nil, err
-		}
-		break
+	log.Printf("==================env", chainTexENV)
+	switch chainTexENV {
 	case "staging":
 		file, err = ioutil.ReadFile("env/staging.json")
 		if err != nil {
@@ -144,22 +137,9 @@ func NewFetcher(kyberENV string) (*Fetcher, error) {
 			return nil, err
 		}
 		break
-	case "ropsten":
-		file, err = ioutil.ReadFile("env/ropsten.json")
-		if err != nil {
-			log.Print(err)
-			return nil, err
-		}
-		break
-	case "rinkeby":
-		file, err = ioutil.ReadFile("env/rinkeby.json")
-		if err != nil {
-			log.Print(err)
-			return nil, err
-		}
-		break
 	default:
-		file, err = ioutil.ReadFile("env/ropsten.json")
+		log.Printf("==================env", chainTexENV)
+		file, err = ioutil.ReadFile("env/testnet.json")
 		if err != nil {
 			log.Print(err)
 			return nil, err
@@ -212,9 +192,9 @@ func NewFetcher(kyberENV string) (*Fetcher, error) {
 	}
 
 	fetcher := &Fetcher{
-		info:     &infoData,
+		info:      &infoData,
 		tomochain: tomochain,
-		fetIns:   fetIns,
+		fetIns:    fetIns,
 		// fetNormalIns: fetNormalIns,
 		marketFetIns: marketFetcherIns,
 		httpFetcher:  httpFetcher,
@@ -396,7 +376,7 @@ func (self *Fetcher) queryRateBlockchain(fromAddr, toAddr, fromSymbol, toSymbol 
 	}
 
 	for _, fetIns := range self.fetIns {
-		if fetIns.GetTypeName() == "etherscan" {
+		if fetIns.GetTypeName() == "tomoscan" {
 			continue
 		}
 		result, err := fetIns.GetRate(self.info.Network, dataAbi)
@@ -539,12 +519,12 @@ func (self *Fetcher) makeDataGetRate(listTokens map[string]tomochain.Token, rate
 }
 
 func (self *Fetcher) runFetchRate(sourceArr, destArr, sourceSymbolArr, destSymbolArr []string, amountArr []*big.Int) ([]tomochain.Rate, error) {
+
 	dataAbi, err := self.tomochain.EncodeRateDataWrapper(sourceArr, destArr, amountArr)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
-
 	for _, fetIns := range self.fetIns {
 		result, err := fetIns.GetRate(self.info.Wapper, dataAbi)
 		if err != nil {

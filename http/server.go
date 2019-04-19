@@ -208,7 +208,7 @@ func (self *HTTPServer) GetUserInfo(c *gin.Context) {
 	)
 }
 
-func (self *HTTPServer) Run(kyberENV string) {
+func (self *HTTPServer) Run(chainTexENV string) {
 	self.r.GET("/getLatestBlock", self.GetLatestBlock)
 	self.r.GET("/latestBlock", self.GetLatestBlock)
 
@@ -240,7 +240,7 @@ func (self *HTTPServer) Run(kyberENV string) {
 
 	self.r.GET("/users", self.GetUserInfo)
 
-	if kyberENV != "production" {
+	if chainTexENV != "production" {
 		self.r.GET("/9d74529bc6c25401a2f984ccc9b0b2b3", self.GetErrorLog)
 	}
 

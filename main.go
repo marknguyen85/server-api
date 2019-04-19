@@ -46,14 +46,14 @@ func main() {
 		defer f.Close()
 	}
 
-	kyberENV := os.Getenv("CHAINTEX_ENV")
+	chainTexENV := os.Getenv("CHAINTEX_ENV")
 	persisterIns, _ := persister.NewPersister("ram")
 	boltIns, err := persister.NewBoltStorage()
 	// boltIns, err := persister.NewInfluxStorage()
 	if err != nil {
 		log.Println("cannot init db: ", err.Error())
 	}
-	fertcherIns, err := fetcher.NewFetcher(kyberENV)
+	fertcherIns, err := fetcher.NewFetcher(chainTexENV)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,28 +71,30 @@ func main() {
 		}
 	}()
 	var (
-		initRate  []tomochain.Rate
-		ethSymbol = common.TOMOSymbol
+		initRate   []tomochain.Rate
+		tomoSymbol = common.TOMOSymbol
 	)
+
 	for symbol := range fertcherIns.GetListToken() {
-		if symbol == ethSymbol {
+		log.Printf("===============item", symbol)
+		if symbol == tomoSymbol {
 			ethRate := tomochain.Rate{
-				Source:  ethSymbol,
-				Dest:    ethSymbol,
+				Source:  tomoSymbol,
+				Dest:    tomoSymbol,
 				Rate:    "0",
 				Minrate: "0",
 			}
 			initRate = append(initRate, ethRate, ethRate)
 		} else {
 			buyRate := tomochain.Rate{
-				Source:  ethSymbol,
+				Source:  tomoSymbol,
 				Dest:    symbol,
 				Rate:    "0",
 				Minrate: "0",
 			}
 			sellRate := tomochain.Rate{
 				Source:  symbol,
-				Dest:    ethSymbol,
+				Dest:    tomoSymbol,
 				Rate:    "0",
 				Minrate: "0",
 			}
@@ -130,7 +132,7 @@ func main() {
 
 	//run server
 	server := http.NewHTTPServer(":3001", persisterIns, fertcherIns)
-	server.Run(kyberENV)
+	server.Run(chainTexENV)
 
 	//init fetch data
 

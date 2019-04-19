@@ -35,8 +35,8 @@ func NewFetcherIns(typeName string, endpoint string, apiKey string) (FetcherInte
 	var fetcher FetcherInterface
 	var err error
 	switch typeName {
-	case "etherscan":
-		fetcher, err = bFetcher.NewEtherScan(typeName, endpoint, apiKey)
+	case "tomoscan":
+		fetcher, err = bFetcher.NewTomoScan(typeName, endpoint, apiKey)
 		break
 	case "node":
 		fetcher, err = bFetcher.NewBlockchainFetcher(typeName, endpoint, apiKey)
