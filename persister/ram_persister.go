@@ -161,158 +161,158 @@ func NewRamPersister() (*RamPersister, error) {
 	return persister, nil
 }
 
-func (self *RamPersister) SaveGeneralInfoTokens(generalInfo map[string]*tomochain.TokenGeneralInfo) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.tokenInfo = generalInfo
-	// self.tokenInfoCG = generalInfoCG
+func (rPersister *RamPersister) SaveGeneralInfoTokens(generalInfo map[string]*tomochain.TokenGeneralInfo) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.tokenInfo = generalInfo
+	// rPersister.tokenInfoCG = generalInfoCG
 }
 
-func (self *RamPersister) GetTokenInfo() map[string]*tomochain.TokenGeneralInfo {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.tokenInfo
+func (rPersister *RamPersister) GetTokenInfo() map[string]*tomochain.TokenGeneralInfo {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.tokenInfo
 }
 
 /////------------------------------
-func (self *RamPersister) GetRate() []tomochain.Rate {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.rates
+func (rPersister *RamPersister) GetRate() []tomochain.Rate {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.rates
 }
 
-func (self *RamPersister) GetTimeUpdateRate() int64 {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.updatedAt
+func (rPersister *RamPersister) GetTimeUpdateRate() int64 {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.updatedAt
 }
 
-func (self *RamPersister) SetIsNewRate(isNewRate bool) {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	// return self.rates
-	self.isNewRate = isNewRate
+func (rPersister *RamPersister) SetIsNewRate(isNewRate bool) {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	// return rPersister.rates
+	rPersister.isNewRate = isNewRate
 }
 
-func (self *RamPersister) GetIsNewRate() bool {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.isNewRate
+func (rPersister *RamPersister) GetIsNewRate() bool {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.isNewRate
 }
 
-func (self *RamPersister) SaveRate(rates []tomochain.Rate, timestamp int64) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.rates = rates
+func (rPersister *RamPersister) SaveRate(rates []tomochain.Rate, timestamp int64) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.rates = rates
 	if timestamp != 0 {
-		self.updatedAt = timestamp
+		rPersister.updatedAt = timestamp
 	}
 }
 
 //--------------------------------------------------------
-func (self *RamPersister) SaveKyberEnabled(enabled bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.kyberEnabled = enabled
-	self.isNewKyberEnabled = true
+func (rPersister *RamPersister) SaveKyberEnabled(enabled bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.kyberEnabled = enabled
+	rPersister.isNewKyberEnabled = true
 }
 
-func (self *RamPersister) SetNewKyberEnabled(isNew bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.isNewKyberEnabled = isNew
+func (rPersister *RamPersister) SetNewKyberEnabled(isNew bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.isNewKyberEnabled = isNew
 }
 
-func (self *RamPersister) GetKyberEnabled() bool {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.kyberEnabled
+func (rPersister *RamPersister) GetKyberEnabled() bool {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.kyberEnabled
 }
 
-func (self *RamPersister) GetNewKyberEnabled() bool {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.isNewKyberEnabled
+func (rPersister *RamPersister) GetNewKyberEnabled() bool {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.isNewKyberEnabled
 }
 
 //--------------------------------------------------------
 
 //--------------------------------------------------------
 
-func (self *RamPersister) SetNewMaxGasPrice(isNew bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.isNewMaxGasPrice = isNew
+func (rPersister *RamPersister) SetNewMaxGasPrice(isNew bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.isNewMaxGasPrice = isNew
 	return
 }
 
-func (self *RamPersister) SaveMaxGasPrice(maxGasPrice string) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.maxGasPrice = maxGasPrice
-	self.isNewMaxGasPrice = true
+func (rPersister *RamPersister) SaveMaxGasPrice(maxGasPrice string) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.maxGasPrice = maxGasPrice
+	rPersister.isNewMaxGasPrice = true
 	return
 }
-func (self *RamPersister) GetMaxGasPrice() string {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.maxGasPrice
+func (rPersister *RamPersister) GetMaxGasPrice() string {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.maxGasPrice
 }
-func (self *RamPersister) GetNewMaxGasPrice() bool {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.isNewMaxGasPrice
+func (rPersister *RamPersister) GetNewMaxGasPrice() bool {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.isNewMaxGasPrice
 }
 
 //--------------------------------------------------------
 
 //--------------------------------------------------------------
 
-func (self *RamPersister) SaveGasPrice(gasPrice *tomochain.GasPrice) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.gasPrice = gasPrice
-	self.isNewGasPrice = true
+func (rPersister *RamPersister) SaveGasPrice(gasPrice *tomochain.GasPrice) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.gasPrice = gasPrice
+	rPersister.isNewGasPrice = true
 }
-func (self *RamPersister) SetNewGasPrice(isNew bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.isNewGasPrice = isNew
+func (rPersister *RamPersister) SetNewGasPrice(isNew bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.isNewGasPrice = isNew
 }
-func (self *RamPersister) GetGasPrice() *tomochain.GasPrice {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.gasPrice
+func (rPersister *RamPersister) GetGasPrice() *tomochain.GasPrice {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.gasPrice
 }
-func (self *RamPersister) GetNewGasPrice() bool {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.isNewGasPrice
+func (rPersister *RamPersister) GetNewGasPrice() bool {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.isNewGasPrice
 }
 
 //-----------------------------------------------------------
 
-func (self *RamPersister) GetRateUSD() []RateUSD {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.rateUSD
+func (rPersister *RamPersister) GetRateUSD() []RateUSD {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.rateUSD
 }
 
-func (self *RamPersister) GetRateTOMO() string {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.rateTOMO
+func (rPersister *RamPersister) GetRateTOMO() string {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.rateTOMO
 }
 
-func (self *RamPersister) GetIsNewRateUSD() bool {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.isNewRateUsd
+func (rPersister *RamPersister) GetIsNewRateUSD() bool {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.isNewRateUsd
 }
 
-func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
-	self.mu.Lock()
-	defer self.mu.Unlock()
+func (rPersister *RamPersister) SaveRateUSD(rateUSDEth string) error {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
 
 	rates := make([]RateUSD, 0)
 	// ratesCG := make([]RateUSD, 0)
@@ -321,12 +321,12 @@ func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 	// itemRateEthCG := RateUSD{Symbol: "TOMO", PriceUsd: rateUSDEthCG}
 	rates = append(rates, itemRateEth)
 	// ratesCG = append(ratesCG, itemRateEthCG)
-	for _, item := range self.rates {
+	for _, item := range rPersister.rates {
 		if item.Source != "TOMO" {
 			priceUsd, err := CalculateRateUSD(item.Rate, rateUSDEth)
 			if err != nil {
 				log.Print(err)
-				self.isNewRateUsd = false
+				rPersister.isNewRateUsd = false
 				return nil
 			}
 
@@ -339,9 +339,9 @@ func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 		}
 	}
 
-	self.rateUSD = rates
-	self.rateTOMO = rateUSDEth
-	self.isNewRateUsd = true
+	rPersister.rateUSD = rates
+	rPersister.rateTOMO = rateUSDEth
+	rPersister.isNewRateUsd = true
 
 	return nil
 }
@@ -366,81 +366,81 @@ func CalculateRateUSD(rateEther string, rateUSD string) (string, error) {
 	return rateUSDNormal.String(), nil
 }
 
-func (self *RamPersister) SetNewRateUSD(isNew bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.isNewRateUsd = isNew
+func (rPersister *RamPersister) SetNewRateUSD(isNew bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.isNewRateUsd = isNew
 }
 
-func (self *RamPersister) GetLatestBlock() string {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.latestBlock
+func (rPersister *RamPersister) GetLatestBlock() string {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.latestBlock
 }
 
-func (self *RamPersister) SaveLatestBlock(blockNumber string) error {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.latestBlock = blockNumber
-	self.isNewLatestBlock = true
+func (rPersister *RamPersister) SaveLatestBlock(blockNumber string) error {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.latestBlock = blockNumber
+	rPersister.isNewLatestBlock = true
 	return nil
 }
 
-func (self *RamPersister) GetIsNewLatestBlock() bool {
-	self.mu.RLock()
-	defer self.mu.RUnlock()
-	return self.isNewLatestBlock
+func (rPersister *RamPersister) GetIsNewLatestBlock() bool {
+	rPersister.mu.RLock()
+	defer rPersister.mu.RUnlock()
+	return rPersister.isNewLatestBlock
 }
 
-func (self *RamPersister) SetNewLatestBlock(isNew bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.isNewLatestBlock = isNew
+func (rPersister *RamPersister) SetNewLatestBlock(isNew bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.isNewLatestBlock = isNew
 }
 
 // ----------------------------------------
 // return data from kyber tracker
 
 // use this api for 3 infomations change, marketcap, volume
-func (self *RamPersister) GetRightMarketData() map[string]*tomochain.RightMarketInfo {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.rightMarketInfo
+func (rPersister *RamPersister) GetRightMarketData() map[string]*tomochain.RightMarketInfo {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.rightMarketInfo
 }
 
-func (self *RamPersister) GetIsNewTrackerData() bool {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.isNewTrackerData
+func (rPersister *RamPersister) GetIsNewTrackerData() bool {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.isNewTrackerData
 }
 
-func (self *RamPersister) SetIsNewTrackerData(isNewTrackerData bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.isNewTrackerData = isNewTrackerData
-	self.numRequestFailedTracker = 0
+func (rPersister *RamPersister) SetIsNewTrackerData(isNewTrackerData bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.isNewTrackerData = isNewTrackerData
+	rPersister.numRequestFailedTracker = 0
 }
 
-func (self *RamPersister) GetLast7D(listTokens string) map[string][]float64 {
-	self.mu.Lock()
-	defer self.mu.Unlock()
+func (rPersister *RamPersister) GetLast7D(listTokens string) map[string][]float64 {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
 	tokens := strings.Split(listTokens, "-")
 	result := make(map[string][]float64)
 	for _, symbol := range tokens {
-		if self.last7D[symbol] != nil {
-			result[symbol] = self.last7D[symbol]
+		if rPersister.last7D[symbol] != nil {
+			result[symbol] = rPersister.last7D[symbol]
 		}
 	}
 	return result
 }
 
-func (self *RamPersister) SaveMarketData(marketRate map[string]*tomochain.Rates, mapTokenInfo map[string]*tomochain.TokenGeneralInfo, tokens map[string]tomochain.Token) {
+func (rPersister *RamPersister) SaveMarketData(marketRate map[string]*tomochain.Rates, mapTokenInfo map[string]*tomochain.TokenGeneralInfo, tokens map[string]tomochain.Token) {
 	lastSevenDays := map[string][]float64{}
 	newResult := map[string]*tomochain.RightMarketInfo{}
 	if len(mapTokenInfo) == 0 {
-		self.mu.RLock()
-		mapTokenInfo = self.tokenInfo
-		self.mu.RUnlock()
+		rPersister.mu.RLock()
+		mapTokenInfo = rPersister.tokenInfo
+		rPersister.mu.RUnlock()
 	}
 	for symbol := range tokens {
 		dataSevenDays := []float64{}
@@ -463,35 +463,35 @@ func (self *RamPersister) SaveMarketData(marketRate map[string]*tomochain.Rates,
 		lastSevenDays[symbol] = dataSevenDays
 	}
 
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.last7D = lastSevenDays
-	self.rightMarketInfo = newResult
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.last7D = lastSevenDays
+	rPersister.rightMarketInfo = newResult
 }
 
-func (self *RamPersister) SetIsNewMarketInfo(isNewMarketInfo bool) {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.isNewMarketInfo = isNewMarketInfo
+func (rPersister *RamPersister) SetIsNewMarketInfo(isNewMarketInfo bool) {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.isNewMarketInfo = isNewMarketInfo
 }
 
-func (self *RamPersister) GetIsNewMarketInfo() bool {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.isNewMarketInfo
+func (rPersister *RamPersister) GetIsNewMarketInfo() bool {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.isNewMarketInfo
 }
 
-func (self *RamPersister) GetTimeVersion() string {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	return self.timeRun
+func (rPersister *RamPersister) GetTimeVersion() string {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	return rPersister.timeRun
 }
 
-func (self *RamPersister) IsFailedToFetchTracker() bool {
-	self.mu.Lock()
-	defer self.mu.Unlock()
-	self.numRequestFailedTracker++
-	if self.numRequestFailedTracker > 12 {
+func (rPersister *RamPersister) IsFailedToFetchTracker() bool {
+	rPersister.mu.Lock()
+	defer rPersister.mu.Unlock()
+	rPersister.numRequestFailedTracker++
+	if rPersister.numRequestFailedTracker > 12 {
 		return true
 	}
 	return false
