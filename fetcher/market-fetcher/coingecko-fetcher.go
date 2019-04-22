@@ -41,22 +41,22 @@ func (self *CGFetcher) GetRateUsdTomo() (string, error) {
 
 func (self *CGFetcher) GetGeneralInfo(coinID string) (*tomochain.TokenGeneralInfo, error) {
 	url := fmt.Sprintf("%s/coins/%s?tickers=false&community_data=false&developer_data=false&sparkline=false", self.API, coinID)
+
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
 	tokenItem := tomochain.TokenInfoCoinGecko{}
+
 	err = json.Unmarshal(b, &tokenItem)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
 
+	log.Print("======================GetGeneralInfo", coinID, tokenItem)
+
 	tokenGenalInfo := tokenItem.ToTokenInfoCMC()
 	return &tokenGenalInfo, nil
 }
-
-// func (self *CGFetcher) GetTypeMarket() string {
-// 	return self.typeMarket
-// }

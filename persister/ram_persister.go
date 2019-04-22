@@ -293,14 +293,12 @@ func (self *RamPersister) GetNewGasPrice() bool {
 //-----------------------------------------------------------
 
 func (self *RamPersister) GetRateUSD() []RateUSD {
-	log.Print("======================GetRateUSD RAM")
 	self.mu.RLock()
 	defer self.mu.RUnlock()
 	return self.rateUSD
 }
 
 func (self *RamPersister) GetRateTOMO() string {
-	log.Print("======================GetRateTOMO RAM")
 	self.mu.RLock()
 	defer self.mu.RUnlock()
 	return self.rateTOMO
