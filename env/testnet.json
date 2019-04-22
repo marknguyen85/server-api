@@ -4,24 +4,17 @@
         "endPoint": "https://scan.testnet.tomochain.com",
         "api_key": "D8YAEQ3V4THAPDA9YSB1YGA1QY9KAMHY6M",
         "type": "tomoscan"
-    },
-    {
-      "endPoint" : "https://ropsten.infura.io/v3/c1d32946e55e45b78c330954cf543fc7",
-      "type": "node"
     }
   ],
   "api_usd":"https://api.coinmarketcap.com",
   "coin_market": ["cmc", "coingecko"],
-  "reserve": "0x0fc1cf3e7dd049f7b42e6823164a64f76fc06be0",
   "network": "0xf6e6ffd3f34b759e30a5357ce749d204aaf5446e",
-  "wrapper": "0x665d34f192f4940da4e859ff7768c0a80ed3ae10",
   "trade_topic":"0x314089036943f0e5ddddd6939d359902c01dac1be72c517cc8342fca023ad71e",
   "endpoint": "wss://testnet.tomochain.com/ws",
   "averageBlockTime": 15000,
   "gasstation_endpoint": "https://ethgasstation.info/json/ethgasAPI.json",
-  "api_endpoint":"https://ropsten-api.kyber.network",
-  "config_endpoint": "http://localhost:3002/currencies",
-  "user_stats_endpoint": "https://dev-users-stats.knstats.com/",
+  "api_endpoint":"https://api.coinmarketcap.com",
+  "config_endpoint": "http://192.168.2.41:3002/currencies",
 
   "can_delete": ["BBO", "COFI", "BITX", "MOC", "MAS"],
 

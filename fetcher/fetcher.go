@@ -11,7 +11,6 @@ import (
 	// "strconv"
 	"time"
 
-	"github.com/marknguyen85/server-api/common"
 	"github.com/marknguyen85/server-api/tomochain"
 	// nFetcher "github.com/marknguyen85/server-api/fetcher/normal-fetcher"
 )
@@ -31,28 +30,22 @@ type Connection struct {
 }
 
 type InfoData struct {
-	mu             *sync.RWMutex
-	ApiUsd         string               `json:"api_usd"`
-	CoinMarket     []string             `json:"coin_market"`
-	TokenAPI       []tomochain.TokenAPI `json:"tokens"`
-	CanDeleteToken []string             `json:"can_delete"`
+	mu         *sync.RWMutex
+	ApiUsd     string               `json:"api_usd"`
+	CoinMarket []string             `json:"coin_market"`
+	TokenAPI   []tomochain.TokenAPI `json:"tokens"`
 
 	Tokens        map[string]tomochain.Token
 	BackupTokens  map[string]tomochain.Token
 	TokenPriority map[string]tomochain.Token
-	//ServerLog ServerLog        `json:"server_logs"`
-	Connections []Connection `json:"connections"`
-
-	//NodeEndpoint string `json:"node_endpoint"`
+	Connections   []Connection `json:"connections"`
 
 	Network    string `json:"network"`
 	NetworkAbi string
 	TradeTopic string `json:"trade_topic"`
 
-	Wapper     string `json:"wrapper"`
-	WrapperAbi string
-	EthAdress  string
-	EthSymbol  string
+	TomoAddress string
+	TomoSymbol  string
 
 	AverageBlockTime int64 `json:"averageBlockTime"`
 
@@ -105,10 +98,9 @@ func (self *InfoData) GetListTokenPriority() map[string]tomochain.Token {
 }
 
 type Fetcher struct {
-	info      *InfoData
-	tomochain *TomoChain
-	fetIns    []FetcherInterface
-	// fetNormalIns []FetcherNormalInterface
+	info         *InfoData
+	tomochain    *TomoChain
+	fetIns       []FetcherInterface
 	marketFetIns MarketFetcherInterface
 	httpFetcher  *HTTPFetcher
 }
@@ -121,7 +113,6 @@ func (self *Fetcher) GetNumTokens() int {
 func NewFetcher(chainTexENV string) (*Fetcher, error) {
 	var file []byte
 	var err error
-	log.Printf("==================env", chainTexENV)
 	switch chainTexENV {
 	case "staging":
 		file, err = ioutil.ReadFile("env/staging.json")
@@ -138,7 +129,6 @@ func NewFetcher(chainTexENV string) (*Fetcher, error) {
 		}
 		break
 	default:
-		log.Printf("==================env", chainTexENV)
 		file, err = ioutil.ReadFile("env/testnet.json")
 		if err != nil {
 			log.Print(err)
@@ -150,11 +140,10 @@ func NewFetcher(chainTexENV string) (*Fetcher, error) {
 	mu := &sync.RWMutex{}
 
 	infoData := InfoData{
-		mu:         mu,
-		WrapperAbi: `[{"constant":true,"inputs":[{"name":"x","type":"bytes14"},{"name":"byteInd","type":"uint256"}],"name":"getInt8FromByte","outputs":[{"name":"","type":"int8"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"reserve","type":"address"},{"name":"tokens","type":"address[]"}],"name":"getBalances","outputs":[{"name":"","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"pricingContract","type":"address"},{"name":"tokenList","type":"address[]"}],"name":"getTokenIndicies","outputs":[{"name":"","type":"uint256[]"},{"name":"","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"x","type":"bytes14"},{"name":"byteInd","type":"uint256"}],"name":"getByteFromBytes14","outputs":[{"name":"","type":"bytes1"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"network","type":"address"},{"name":"sources","type":"address[]"},{"name":"dests","type":"address[]"},{"name":"qty","type":"uint256[]"}],"name":"getExpectedRates","outputs":[{"name":"expectedRate","type":"uint256[]"},{"name":"slippageRate","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"pricingContract","type":"address"},{"name":"tokenList","type":"address[]"}],"name":"getTokenRates","outputs":[{"name":"","type":"uint256[]"},{"name":"","type":"uint256[]"},{"name":"","type":"int8[]"},{"name":"","type":"int8[]"},{"name":"","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"}]`,
-		EthAdress:  "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-		EthSymbol:  "TOMO",
-		NetworkAbi: `[{"constant":false,"inputs":[{"name":"alerter","type":"address"}],"name":"removeAlerter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"reserve","type":"address"},{"name":"src","type":"address"},{"name":"dest","type":"address"},{"name":"add","type":"bool"}],"name":"listPairForReserve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"bytes32"}],"name":"perReserveListedPairs","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getReserves","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"enabled","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"pendingAdmin","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getOperators","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"token","type":"address"},{"name":"amount","type":"uint256"},{"name":"sendTo","type":"address"}],"name":"withdrawToken","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"maxGasPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newAlerter","type":"address"}],"name":"addAlerter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"negligibleRateDiff","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeBurnerContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"expectedRateContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"whiteListContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"user","type":"address"}],"name":"getUserCapInWei","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newAdmin","type":"address"}],"name":"transferAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_enable","type":"bool"}],"name":"setEnable","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"claimAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"isReserve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getAlerters","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"src","type":"address"},{"name":"dest","type":"address"},{"name":"srcQty","type":"uint256"}],"name":"getExpectedRate","outputs":[{"name":"expectedRate","type":"uint256"},{"name":"slippageRate","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"reserves","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOperator","type":"address"}],"name":"addOperator","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"reserve","type":"address"},{"name":"add","type":"bool"}],"name":"addReserve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"operator","type":"address"}],"name":"removeOperator","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_whiteList","type":"address"},{"name":"_expectedRate","type":"address"},{"name":"_feeBurner","type":"address"},{"name":"_maxGasPrice","type":"uint256"},{"name":"_negligibleRateDiff","type":"uint256"}],"name":"setParams","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"src","type":"address"},{"name":"dest","type":"address"},{"name":"srcQty","type":"uint256"}],"name":"findBestRate","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"srcAmount","type":"uint256"},{"name":"dest","type":"address"},{"name":"destAddress","type":"address"},{"name":"maxDestAmount","type":"uint256"},{"name":"minConversionRate","type":"uint256"},{"name":"walletId","type":"address"}],"name":"trade","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"},{"name":"sendTo","type":"address"}],"name":"withdrawEther","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getNumReserves","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"token","type":"address"},{"name":"user","type":"address"}],"name":"getBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"admin","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_admin","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"EtherReceival","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"source","type":"address"},{"indexed":false,"name":"dest","type":"address"},{"indexed":false,"name":"actualSrcAmount","type":"uint256"},{"indexed":false,"name":"actualDestAmount","type":"uint256"}],"name":"ExecuteTrade","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"reserve","type":"address"},{"indexed":false,"name":"add","type":"bool"}],"name":"AddReserveToNetwork","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"reserve","type":"address"},{"indexed":false,"name":"src","type":"address"},{"indexed":false,"name":"dest","type":"address"},{"indexed":false,"name":"add","type":"bool"}],"name":"ListReservePairs","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"token","type":"address"},{"indexed":false,"name":"amount","type":"uint256"},{"indexed":false,"name":"sendTo","type":"address"}],"name":"TokenWithdraw","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"amount","type":"uint256"},{"indexed":false,"name":"sendTo","type":"address"}],"name":"EtherWithdraw","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"pendingAdmin","type":"address"}],"name":"TransferAdminPending","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newAdmin","type":"address"},{"indexed":false,"name":"previousAdmin","type":"address"}],"name":"AdminClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newAlerter","type":"address"},{"indexed":false,"name":"isAdd","type":"bool"}],"name":"AlerterAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newOperator","type":"address"},{"indexed":false,"name":"isAdd","type":"bool"}],"name":"OperatorAdded","type":"event"}]`,
+		mu:          mu,
+		TomoAddress: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+		TomoSymbol:  "TOMO",
+		NetworkAbi:  `[{"constant":false,"inputs":[{"name":"alerter","type":"address"}],"name":"removeAlerter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"token","type":"address"},{"name":"srcQty","type":"uint256"}],"name":"getExpectedFeeRate","outputs":[{"name":"expectedRate","type":"uint256"},{"name":"slippageRate","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"token","type":"address"},{"name":"srcAmount","type":"uint256"},{"name":"minConversionRate","type":"uint256"}],"name":"swapTokenToTomo","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"enabled","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"pendingAdmin","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getOperators","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"srcAmount","type":"uint256"},{"name":"destAddress","type":"address"}],"name":"payTxFeeFast","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"token","type":"address"},{"name":"amount","type":"uint256"},{"name":"sendTo","type":"address"}],"name":"withdrawToken","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"maxGasPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newAlerter","type":"address"}],"name":"addAlerter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_networkContract","type":"address"}],"name":"setNetworkContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"payFeeCallers","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"user","type":"address"}],"name":"getUserCapInWei","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"srcAmount","type":"uint256"},{"name":"dest","type":"address"},{"name":"minConversionRate","type":"uint256"}],"name":"swapTokenToToken","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newAdmin","type":"address"}],"name":"transferAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"claimAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newAdmin","type":"address"}],"name":"transferAdminQuickly","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getAlerters","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"src","type":"address"},{"name":"dest","type":"address"},{"name":"srcQty","type":"uint256"}],"name":"getExpectedRate","outputs":[{"name":"expectedRate","type":"uint256"},{"name":"slippageRate","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"user","type":"address"},{"name":"token","type":"address"}],"name":"getUserCapInTokenWei","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOperator","type":"address"}],"name":"addOperator","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"srcAmount","type":"uint256"},{"name":"dest","type":"address"},{"name":"destAddress","type":"address"},{"name":"maxDestAmount","type":"uint256"},{"name":"minConversionRate","type":"uint256"},{"name":"walletId","type":"address"}],"name":"swap","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"operator","type":"address"}],"name":"removeOperator","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"field","type":"bytes32"}],"name":"info","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"caller","type":"address"},{"name":"add","type":"bool"}],"name":"addPayFeeCaller","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"token","type":"address"},{"name":"minConversionRate","type":"uint256"}],"name":"swapTomoToToken","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"srcAmount","type":"uint256"},{"name":"dest","type":"address"},{"name":"destAddress","type":"address"},{"name":"maxDestAmount","type":"uint256"},{"name":"minConversionRate","type":"uint256"},{"name":"walletId","type":"address"}],"name":"trade","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"},{"name":"sendTo","type":"address"}],"name":"withdrawEther","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"token","type":"address"},{"name":"user","type":"address"}],"name":"getBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"networkContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"admin","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"srcAmount","type":"uint256"},{"name":"destAddress","type":"address"},{"name":"maxDestAmount","type":"uint256"},{"name":"minConversionRate","type":"uint256"}],"name":"payTxFee","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"_admin","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"caller","type":"address"},{"indexed":false,"name":"add","type":"bool"}],"name":"AddPayFeeCaller","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"trader","type":"address"},{"indexed":false,"name":"src","type":"address"},{"indexed":false,"name":"dest","type":"address"},{"indexed":false,"name":"actualSrcAmount","type":"uint256"},{"indexed":false,"name":"actualDestAmount","type":"uint256"}],"name":"ExecuteTrade","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newNetworkContract","type":"address"},{"indexed":false,"name":"oldNetworkContract","type":"address"}],"name":"NetworkSet","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"token","type":"address"},{"indexed":false,"name":"amount","type":"uint256"},{"indexed":false,"name":"sendTo","type":"address"}],"name":"TokenWithdraw","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"amount","type":"uint256"},{"indexed":false,"name":"sendTo","type":"address"}],"name":"EtherWithdraw","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"pendingAdmin","type":"address"}],"name":"TransferAdminPending","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newAdmin","type":"address"},{"indexed":false,"name":"previousAdmin","type":"address"}],"name":"AdminClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newAlerter","type":"address"},{"indexed":false,"name":"isAdd","type":"bool"}],"name":"AlerterAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newOperator","type":"address"},{"indexed":false,"name":"isAdd","type":"bool"}],"name":"OperatorAdded","type":"event"}]`,
 	}
 	err = json.Unmarshal(file, &infoData)
 	if err != nil {
@@ -172,6 +161,7 @@ func NewFetcher(chainTexENV string) (*Fetcher, error) {
 
 	fetIns := make([]FetcherInterface, 0)
 	for _, connection := range infoData.Connections {
+		log.Print("===================connection", connection)
 		newFetcher, err := NewFetcherIns(connection.Type, connection.Endpoint, connection.Apikey)
 		if err != nil {
 			log.Print(err)
@@ -180,22 +170,23 @@ func NewFetcher(chainTexENV string) (*Fetcher, error) {
 		}
 	}
 
+	log.Print("===================fetIns", fetIns)
+
 	marketFetcherIns := NewMarketFetcherInterface()
 
 	httpFetcher := NewHTTPFetcher(infoData.ConfigEndpoint, infoData.GasStationEndpoint, infoData.APIEndpoint)
 
 	tomochain, err := NewTomoChain(infoData.Network, infoData.NetworkAbi, infoData.TradeTopic,
-		infoData.Wapper, infoData.WrapperAbi, infoData.AverageBlockTime)
+		infoData.AverageBlockTime)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
 
 	fetcher := &Fetcher{
-		info:      &infoData,
-		tomochain: tomochain,
-		fetIns:    fetIns,
-		// fetNormalIns: fetNormalIns,
+		info:         &infoData,
+		tomochain:    tomochain,
+		fetIns:       fetIns,
 		marketFetIns: marketFetcherIns,
 		httpFetcher:  httpFetcher,
 	}
@@ -281,9 +272,9 @@ func (self *Fetcher) GetGeneralInfoTokens() map[string]*tomochain.TokenGeneralIn
 	return generalInfo
 }
 
-func (self *Fetcher) GetRateUsdEther() (string, error) {
-	// rateUsd, err := self.marketFetIns.GetRateUsdEther()
-	rateUsd, err := self.httpFetcher.GetRateUsdEther()
+func (self *Fetcher) GetRateUsdTomo() (string, error) {
+	rateUsd, err := self.marketFetIns.GetRateUsdTomo()
+	//rateUsd, err := self.httpFetcher.GetRateUsdTomo()
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -367,190 +358,12 @@ func tokenWei(decimal int) *big.Int {
 	return new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(decimal)), nil)
 }
 
-func (self *Fetcher) queryRateBlockchain(fromAddr, toAddr, fromSymbol, toSymbol string, amount *big.Int) (tomochain.Rate, error) {
-	var rate tomochain.Rate
-	dataAbi, err := self.tomochain.EncodeRateData(fromAddr, toAddr, amount)
-	if err != nil {
-		log.Print(err)
-		return rate, err
-	}
-
-	for _, fetIns := range self.fetIns {
-		if fetIns.GetTypeName() == "tomoscan" {
-			continue
-		}
-		result, err := fetIns.GetRate(self.info.Network, dataAbi)
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-		rate, err := self.tomochain.ExtractRateData(result, fromSymbol, toSymbol)
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-		return rate, nil
-	}
-	return rate, errors.New("cannot get rate")
-}
-
-func (self *Fetcher) getRateNetwork(sourceArr []string, sourceSymbolArr []string, destArr []string, destSymbolArr []string, amountArr []*big.Int) ([]tomochain.Rate, error) {
-	var result []tomochain.Rate
-	// sourceArr, sourceSymbolArr, destArr, destSymbolArr, amountArr := self.makeDataGetRate(oldRates)
-
-	for index, source := range sourceArr {
-		sourceSymbol := sourceSymbolArr[index]
-		destSymbol := destSymbolArr[index]
-		rate, err := self.queryRateBlockchain(source, destArr[index], sourceSymbol, destSymbol, amountArr[index])
-		if err != nil {
-			log.Printf("cant get rate pair %s_%s", sourceSymbol, destSymbol)
-			emptyRate := tomochain.Rate{
-				Source:  sourceSymbol,
-				Dest:    destSymbol,
-				Rate:    "0",
-				Minrate: "0",
-			}
-			result = append(result, emptyRate)
-		} else {
-			result = append(result, rate)
-		}
-		time.Sleep(timeW8Req * time.Millisecond)
-	}
-	return result, nil
-}
-
-// GetRate get full rate of list token
-func (self *Fetcher) GetRate(currentRate []tomochain.Rate, isNewRate bool, mapToken map[string]tomochain.Token, fallback bool) ([]tomochain.Rate, error) {
-	var (
-		rates []tomochain.Rate
-		err   error
-	)
-	if !isNewRate {
-		initRate := self.getInitRate(mapToken)
-		currentRate = initRate
-	}
-	sourceArr, sourceSymbolArr, destArr, destSymbolArr, amountArr := self.makeDataGetRate(mapToken, currentRate)
-	rates, err = self.runFetchRate(sourceArr, destArr, sourceSymbolArr, destSymbolArr, amountArr)
-
-	if err != nil && fallback {
-		log.Println("cannot get rate from wrapper, change to get from network")
-		rates, _ = self.getRateNetwork(sourceArr, sourceSymbolArr, destArr, destSymbolArr, amountArr)
-	}
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	return rates, nil
-}
-
-func (self *Fetcher) getInitRate(listTokens map[string]tomochain.Token) []tomochain.Rate {
-	ethSymbol := common.TOMOSymbol
-	ethAddr := common.TOMOAddr
-	minAmountTOMO := getAmountInWei(MIN_TOMO)
-
-	srcArr := []string{}
-	destArr := []string{}
-	srcSymbolArr := []string{}
-	dstSymbolArr := []string{}
-	amount := []*big.Int{}
-	for _, t := range listTokens {
-		if t.Symbol == ethSymbol {
-			continue
-		}
-		srcArr = append(srcArr, ethAddr)
-		destArr = append(destArr, t.Address)
-		srcSymbolArr = append(srcSymbolArr, ethSymbol)
-		dstSymbolArr = append(dstSymbolArr, t.Symbol)
-		amount = append(amount, minAmountTOMO)
-	}
-	initRate, _ := self.runFetchRate(srcArr, destArr, srcSymbolArr, dstSymbolArr, amount)
-	return initRate
-}
-
 func getMapRates(rates []tomochain.Rate) map[string]tomochain.Rate {
 	m := make(map[string]tomochain.Rate)
 	for _, r := range rates {
 		m[r.Dest] = r
 	}
 	return m
-}
-
-func (self *Fetcher) makeDataGetRate(listTokens map[string]tomochain.Token, rates []tomochain.Rate) ([]string, []string, []string, []string, []*big.Int) {
-	sourceAddr := make([]string, 0)
-	sourceSymbol := make([]string, 0)
-	destAddr := make([]string, 0)
-	destSymbol := make([]string, 0)
-	amount := make([]*big.Int, 0)
-	amountTOMO := make([]*big.Int, 0)
-	ethSymbol := common.TOMOSymbol
-	ethAddr := common.TOMOAddr
-	minAmountTOMO := getAmountInWei(MIN_TOMO)
-	mapRate := getMapRates(rates)
-
-	for _, t := range listTokens {
-		decimal := t.Decimal
-		amountToken := tokenWei(t.Decimal / 2)
-		if t.Symbol == ethSymbol {
-			amountToken = minAmountTOMO
-		} else {
-			if rate, ok := mapRate[t.Symbol]; ok {
-				r := new(big.Int)
-				r.SetString(rate.Rate, 10)
-				if r.Cmp(new(big.Int)) != 0 {
-					amountToken = getAmountTokenWithMinTOMO(r, decimal)
-				}
-			}
-		}
-		sourceAddr = append(sourceAddr, t.Address)
-		destAddr = append(destAddr, ethAddr)
-		sourceSymbol = append(sourceSymbol, t.Symbol)
-		destSymbol = append(destSymbol, ethSymbol)
-		amount = append(amount, amountToken)
-		amountTOMO = append(amountTOMO, minAmountTOMO)
-	}
-
-	sourceArr := append(sourceAddr, destAddr...)
-	sourceSymbolArr := append(sourceSymbol, destSymbol...)
-	destArr := append(destAddr, sourceAddr...)
-	destSymbolArr := append(destSymbol, sourceSymbol...)
-	amountArr := append(amount, amountTOMO...)
-
-	return sourceArr, sourceSymbolArr, destArr, destSymbolArr, amountArr
-}
-
-func (self *Fetcher) runFetchRate(sourceArr, destArr, sourceSymbolArr, destSymbolArr []string, amountArr []*big.Int) ([]tomochain.Rate, error) {
-
-	dataAbi, err := self.tomochain.EncodeRateDataWrapper(sourceArr, destArr, amountArr)
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-	for _, fetIns := range self.fetIns {
-		result, err := fetIns.GetRate(self.info.Wapper, dataAbi)
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-		rates, err := self.tomochain.ExtractRateDataWrapper(result, sourceSymbolArr, destSymbolArr)
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-		return rates, nil
-	}
-	return nil, errors.New("Cannot get rate")
-}
-
-func (self *Fetcher) GetLatestBlock() (string, error) {
-	for _, fetIns := range self.fetIns {
-		blockNo, err := fetIns.GetLatestBlock()
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-		return blockNo, nil
-	}
-	return "", errors.New("Cannot get block number")
 }
 
 func (self *Fetcher) FetchRate7dData() (map[string]*tomochain.Rates, error) {
@@ -561,12 +374,4 @@ func (self *Fetcher) FetchRate7dData() (map[string]*tomochain.Rates, error) {
 		return nil, errors.New("Cannot get data from tracker")
 	}
 	return result, nil
-}
-
-func (self *Fetcher) FetchUserInfo(address string) (*common.UserInfo, error) {
-	userInfo, err := self.httpFetcher.GetUserInfo(self.info.UserStatsEndpoint + "users?address=" + address)
-	if err != nil {
-		return nil, errors.New("Cannot get user info")
-	}
-	return userInfo, nil
 }

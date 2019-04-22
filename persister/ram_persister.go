@@ -293,40 +293,24 @@ func (self *RamPersister) GetNewGasPrice() bool {
 //-----------------------------------------------------------
 
 func (self *RamPersister) GetRateUSD() []RateUSD {
+	log.Print("======================GetRateUSD RAM")
 	self.mu.RLock()
 	defer self.mu.RUnlock()
 	return self.rateUSD
 }
 
-// func (self *RamPersister) GetRateUSDCG() []RateUSD {
-// 	self.mu.RLock()
-// 	defer self.mu.RUnlock()
-// 	return self.rateUSDCG
-// }
-
 func (self *RamPersister) GetRateTOMO() string {
+	log.Print("======================GetRateTOMO RAM")
 	self.mu.RLock()
 	defer self.mu.RUnlock()
 	return self.rateTOMO
 }
-
-// func (self *RamPersister) GetRateTOMOCG() string {
-// 	self.mu.RLock()
-// 	defer self.mu.RUnlock()
-// 	return self.rateTOMOCG
-// }
 
 func (self *RamPersister) GetIsNewRateUSD() bool {
 	self.mu.RLock()
 	defer self.mu.RUnlock()
 	return self.isNewRateUsd
 }
-
-// func (self *RamPersister) GetIsNewRateUSDCG() bool {
-// 	self.mu.RLock()
-// 	defer self.mu.RUnlock()
-// 	return self.isNewRateUsdCG
-// }
 
 func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 	self.mu.Lock()
@@ -347,22 +331,13 @@ func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 				self.isNewRateUsd = false
 				return nil
 			}
-			// priceUsdCG, err := CalculateRateUSD(item.Rate, rateUSDEthCG)
-			// if err != nil {
-			// 	log.Print(err)
-			// 	self.isNewRateUsdCG = false
-			// 	return nil
-			// }
+
 			sourceSymbol := item.Source
 			if sourceSymbol == "TOMOOS" {
 				sourceSymbol = "BQX"
 			}
 			itemRate := RateUSD{Symbol: sourceSymbol, PriceUsd: priceUsd}
 			rates = append(rates, itemRate)
-			// ratesCG = append(ratesCG, RateUSD{
-			// 	Symbol:   sourceSymbol,
-			// 	PriceUsd: priceUsdCG,
-			// })
 		}
 	}
 
@@ -370,16 +345,10 @@ func (self *RamPersister) SaveRateUSD(rateUSDEth string) error {
 	self.rateTOMO = rateUSDEth
 	self.isNewRateUsd = true
 
-	// self.rateUSDCG = ratesCG
-	// self.rateTOMOCG = rateUSDEthCG
-	// self.isNewRateUsdCG = true
-
 	return nil
 }
 
 func CalculateRateUSD(rateEther string, rateUSD string) (string, error) {
-	//func (z *Int) SetString(s string, base int) (*Int, bool)
-
 	bigRateUSD, ok := new(big.Float).SetString(rateUSD)
 	if !ok {
 		err := errors.New("Cannot convert rate usd of ether to big float")
@@ -404,12 +373,6 @@ func (self *RamPersister) SetNewRateUSD(isNew bool) {
 	defer self.mu.Unlock()
 	self.isNewRateUsd = isNew
 }
-
-// func (self *RamPersister) SetNewRateUSDCG(isNew bool) {
-// 	self.mu.Lock()
-// 	defer self.mu.Unlock()
-// 	self.isNewRateUsdCG = isNew
-// }
 
 func (self *RamPersister) GetLatestBlock() string {
 	self.mu.RLock()
@@ -446,12 +409,6 @@ func (self *RamPersister) GetRightMarketData() map[string]*tomochain.RightMarket
 	defer self.mu.Unlock()
 	return self.rightMarketInfo
 }
-
-// func (self *RamPersister) GetRightMarketDataCG() map[string]*tomochain.RightMarketInfo {
-// 	self.mu.Lock()
-// 	defer self.mu.Unlock()
-// 	return self.rightMarketInfoCG
-// }
 
 func (self *RamPersister) GetIsNewTrackerData() bool {
 	self.mu.Lock()
@@ -520,23 +477,11 @@ func (self *RamPersister) SetIsNewMarketInfo(isNewMarketInfo bool) {
 	self.isNewMarketInfo = isNewMarketInfo
 }
 
-// func (self *RamPersister) SetIsNewMarketInfoCG(isNewMarketInfo bool) {
-// 	self.mu.Lock()
-// 	defer self.mu.Unlock()
-// 	self.isNewMarketInfoCG = isNewMarketInfo
-// }
-
 func (self *RamPersister) GetIsNewMarketInfo() bool {
 	self.mu.Lock()
 	defer self.mu.Unlock()
 	return self.isNewMarketInfo
 }
-
-// func (self *RamPersister) GetIsNewMarketInfoCG() bool {
-// 	self.mu.Lock()
-// 	defer self.mu.Unlock()
-// 	return self.isNewMarketInfoCG
-// }
 
 func (self *RamPersister) GetTimeVersion() string {
 	self.mu.Lock()

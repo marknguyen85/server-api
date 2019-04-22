@@ -21,7 +21,7 @@ func NewCGFetcher() *CGFetcher {
 	}
 }
 
-func (self *CGFetcher) GetRateUsdEther() (string, error) {
+func (self *CGFetcher) GetRateUsdTomo() (string, error) {
 	// typeMarket := self.typeMarket
 	url := self.API + "/coins/tomochain"
 	b, err := fCommon.HTTPCall(url)

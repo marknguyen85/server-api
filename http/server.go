@@ -5,17 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/marknguyen85/server-api/fetcher"
-	persister "github.com/marknguyen85/server-api/persister"
 	raven "github.com/getsentry/raven-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sentry"
 	"github.com/gin-gonic/gin"
-)
-
-const (
-	MAX_PAGE_SIZE = 50
-	DEFAULT_PAGE  = 1
+	"github.com/marknguyen85/server-api/fetcher"
+	persister "github.com/marknguyen85/server-api/persister"
 )
 
 type HTTPServer struct {
@@ -40,21 +35,6 @@ func (self *HTTPServer) GetRate(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{"success": true, "updateAt": updateAt, "data": rates},
-	)
-}
-
-func (self *HTTPServer) GetLatestBlock(c *gin.Context) {
-	if !self.persister.GetIsNewLatestBlock() {
-		c.JSON(
-			http.StatusOK,
-			gin.H{"success": false},
-		)
-		return
-	}
-	blockNum := self.persister.GetLatestBlock()
-	c.JSON(
-		http.StatusOK,
-		gin.H{"success": true, "data": blockNum},
 	)
 }
 
@@ -83,58 +63,10 @@ func (self *HTTPServer) GetRateTOMO(c *gin.Context) {
 		return
 	}
 
-	ethRate := self.persister.GetRateTOMO()
+	tomoRate := self.persister.GetRateTOMO()
 	c.JSON(
 		http.StatusOK,
-		gin.H{"success": true, "data": ethRate},
-	)
-}
-
-func (self *HTTPServer) GetKyberEnabled(c *gin.Context) {
-	if !self.persister.GetNewKyberEnabled() {
-		c.JSON(
-			http.StatusOK,
-			gin.H{"success": false},
-		)
-		return
-	}
-
-	enabled := self.persister.GetKyberEnabled()
-	c.JSON(
-		http.StatusOK,
-		gin.H{"success": true, "data": enabled},
-	)
-}
-
-func (self *HTTPServer) GetMaxGasPrice(c *gin.Context) {
-	if !self.persister.GetNewMaxGasPrice() {
-		c.JSON(
-			http.StatusOK,
-			gin.H{"success": false},
-		)
-		return
-	}
-
-	gasPrice := self.persister.GetMaxGasPrice()
-	c.JSON(
-		http.StatusOK,
-		gin.H{"success": true, "data": gasPrice},
-	)
-}
-
-func (self *HTTPServer) GetGasPrice(c *gin.Context) {
-	if !self.persister.GetNewGasPrice() {
-		c.JSON(
-			http.StatusOK,
-			gin.H{"success": false},
-		)
-		return
-	}
-
-	gasPrice := self.persister.GetGasPrice()
-	c.JSON(
-		http.StatusOK,
-		gin.H{"success": true, "data": gasPrice},
+		gin.H{"success": true, "data": tomoRate},
 	)
 }
 
@@ -150,21 +82,6 @@ func (self *HTTPServer) GetErrorLog(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{"success": true, "data": string(dat[:])},
-	)
-}
-
-func (self *HTTPServer) GetRightMarketInfo(c *gin.Context) {
-	data := self.persister.GetRightMarketData()
-	if self.persister.GetIsNewMarketInfo() {
-		c.JSON(
-			http.StatusOK,
-			gin.H{"success": true, "data": data, "status": "latest"},
-		)
-		return
-	}
-	c.JSON(
-		http.StatusOK,
-		gin.H{"success": true, "data": data, "status": "old"},
 	)
 }
 
@@ -192,43 +109,9 @@ func (self *HTTPServer) getCacheVersion(c *gin.Context) {
 	)
 }
 
-func (self *HTTPServer) GetUserInfo(c *gin.Context) {
-	address := c.Query("address")
-	userInfo, err := self.fetcher.FetchUserInfo(address)
-	if err != nil {
-		c.JSON(
-			http.StatusOK,
-			gin.H{"error": err.Error()},
-		)
-		return
-	}
-	c.JSON(
-		http.StatusOK,
-		userInfo,
-	)
-}
-
 func (self *HTTPServer) Run(chainTexENV string) {
-	self.r.GET("/getLatestBlock", self.GetLatestBlock)
-	self.r.GET("/latestBlock", self.GetLatestBlock)
-
 	self.r.GET("/getRateUSD", self.GetRateUSD)
 	self.r.GET("/rateUSD", self.GetRateUSD)
-
-	self.r.GET("/getRate", self.GetRate)
-	self.r.GET("/rate", self.GetRate)
-
-	self.r.GET("/getKyberEnabled", self.GetKyberEnabled)
-	self.r.GET("/kyberEnabled", self.GetKyberEnabled)
-
-	self.r.GET("/getMaxGasPrice", self.GetMaxGasPrice)
-	self.r.GET("/maxGasPrice", self.GetMaxGasPrice)
-
-	self.r.GET("/getGasPrice", self.GetGasPrice)
-	self.r.GET("/gasPrice", self.GetGasPrice)
-
-	self.r.GET("/getRightMarketInfo", self.GetRightMarketInfo)
-	self.r.GET("/marketInfo", self.GetRightMarketInfo)
 
 	self.r.GET("/getLast7D", self.GetLast7D)
 	self.r.GET("/last7D", self.GetLast7D)
@@ -237,8 +120,6 @@ func (self *HTTPServer) Run(chainTexENV string) {
 	self.r.GET("/rateTOMO", self.GetRateTOMO)
 
 	self.r.GET("/cacheVersion", self.getCacheVersion)
-
-	self.r.GET("/users", self.GetUserInfo)
 
 	if chainTexENV != "production" {
 		self.r.GET("/9d74529bc6c25401a2f984ccc9b0b2b3", self.GetErrorLog)

@@ -12,21 +12,9 @@ type RateUSD struct {
 type FetcherInterface interface {
 	EthCall(string, string) (string, error)
 	GetLatestBlock() (string, error)
-	// GetEvents(string, string, string, string) (*[]tomochain.EventRaw, error)
-
-	// GetRateUsd([]string) ([]io.ReadCloser, error)
-	// GetGasPrice() (*tomochain.GasPrice, error)
-
 	GetTypeName() string
 
 	GetRate(string, string) (string, error)
-
-	// GetRateUsdEther() (string, error)
-
-	// GetGeneralInfo(string) (*tomochain.TokenGeneralInfo, error)
-
-	// get data from tracker
-	// GetTrackerData(trackerEndpoint string) (map[string]*tomochain.Rates, error)
 }
 
 //var transactionPersistent = models.NewTransactionPersister()

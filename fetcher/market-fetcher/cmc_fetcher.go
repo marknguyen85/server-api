@@ -23,7 +23,7 @@ func NewCMCFetcher() *CMCFetcher {
 	}
 }
 
-func (self *CMCFetcher) GetRateUsdEther() (string, error) {
+func (self *CMCFetcher) GetRateUsdTomo() (string, error) {
 	// typeMarket := self.typeMarket
 	url := self.APIV1 + "/ticker/tomochain"
 	b, err := fCommon.HTTPCall(url)

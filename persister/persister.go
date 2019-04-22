@@ -20,36 +20,11 @@ type Persister interface {
 	SaveGeneralInfoTokens(map[string]*tomochain.TokenGeneralInfo)
 	GetTokenInfo() map[string]*tomochain.TokenGeneralInfo
 
-	GetLatestBlock() string
-	GetIsNewLatestBlock() bool
-	SaveLatestBlock(string) error
-	SetNewLatestBlock(bool)
-
 	GetRateUSD() []RateUSD
 	GetRateTOMO() string
 	GetIsNewRateUSD() bool
 	SaveRateUSD(string) error
 	SetNewRateUSD(bool)
-
-	// GetRateUSDCG() []RateUSD
-	// GetRateTOMOCG() string
-	// SetNewRateUSDCG(bool)
-	// GetIsNewRateUSDCG() bool
-
-	SaveKyberEnabled(bool)
-	SetNewKyberEnabled(bool)
-	GetKyberEnabled() bool
-	GetNewKyberEnabled() bool
-
-	SetNewMaxGasPrice(bool)
-	SaveMaxGasPrice(string)
-	GetMaxGasPrice() string
-	GetNewMaxGasPrice() bool
-
-	SaveGasPrice(*tomochain.GasPrice)
-	SetNewGasPrice(bool)
-	GetGasPrice() *tomochain.GasPrice
-	GetNewGasPrice() bool
 
 	SaveMarketData(rates map[string]*tomochain.Rates, mapTokenInfo map[string]*tomochain.TokenGeneralInfo, tokens map[string]tomochain.Token)
 	GetRightMarketData() map[string]*tomochain.RightMarketInfo

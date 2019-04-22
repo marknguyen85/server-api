@@ -1,7 +1,6 @@
 package fetcher
 
 import (
-	"errors"
 	"log"
 	"math/big"
 	"strconv"
@@ -28,12 +27,10 @@ type TomoChain struct {
 	network          string
 	networkAbi       abi.ABI
 	tradeTopic       string
-	wrapper          string
-	wrapperAbi       abi.ABI
 	averageBlockTime int64
 }
 
-func NewTomoChain(network string, networkAbiStr string, tradeTopic string, wrapper string, wrapperAbiStr string, averageBlockTime int64) (*TomoChain, error) {
+func NewTomoChain(network string, networkAbiStr string, tradeTopic string, averageBlockTime int64) (*TomoChain, error) {
 
 	networkAbi, err := abi.JSON(strings.NewReader(networkAbiStr))
 	if err != nil {
@@ -41,14 +38,8 @@ func NewTomoChain(network string, networkAbiStr string, tradeTopic string, wrapp
 		return nil, err
 	}
 
-	wrapperAbi, err := abi.JSON(strings.NewReader(wrapperAbiStr))
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-
 	tomochain := &TomoChain{
-		network, networkAbi, tradeTopic, wrapper, wrapperAbi, averageBlockTime,
+		network, networkAbi, tradeTopic, averageBlockTime,
 	}
 
 	return tomochain, nil
@@ -65,30 +56,6 @@ func (self *TomoChain) EncodeRateData(source, dest string, quantity *big.Int) (s
 	destAddr := common.HexToAddress(dest)
 
 	encodedData, err := self.networkAbi.Pack("getExpectedRate", srcAddr, destAddr, getOrAmount(quantity))
-	if err != nil {
-		log.Print(err)
-		return "", err
-	}
-
-	return common.Bytes2Hex(encodedData), nil
-}
-
-func (self *TomoChain) EncodeRateDataWrapper(source, dest []string, quantity []*big.Int) (string, error) {
-	sourceList := make([]common.Address, 0)
-	for _, sourceItem := range source {
-		sourceList = append(sourceList, common.HexToAddress(sourceItem))
-	}
-	destList := make([]common.Address, 0)
-	for _, destItem := range dest {
-		destList = append(destList, common.HexToAddress(destItem))
-	}
-
-	quantityList := make([]*big.Int, 0)
-	for _, quanItem := range quantity {
-		quantityList = append(quantityList, getOrAmount(quanItem))
-	}
-
-	encodedData, err := self.wrapperAbi.Pack("getExpectedRates", common.HexToAddress(self.network), sourceList, destList, quantityList)
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -165,39 +132,6 @@ func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol s
 		Rate:    rateNetwork.ExpectedRate.String(),
 		Minrate: rateNetwork.SlippageRate.String(),
 	}, nil
-}
-
-func (self *TomoChain) ExtractRateDataWrapper(result string, sourceArr, destAddr []string) ([]tomochain.Rate, error) {
-	rateByte, err := hexutil.Decode(result)
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-	var rateWapper RateWrapper
-	err = self.wrapperAbi.Unpack(&rateWapper, "getExpectedRates", rateByte)
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-
-	var lenArr = len(sourceArr)
-	if (len(rateWapper.ExpectedRate) != lenArr) || (len(rateWapper.SlippageRate) != lenArr) {
-		errorLength := errors.New("Length of expected for slippage rate is not enough")
-		log.Print(errorLength)
-		return nil, errorLength
-	}
-
-	rateReturn := make([]tomochain.Rate, 0)
-	for i := 0; i < lenArr; i++ {
-		source := sourceArr[i]
-		dest := destAddr[i]
-		rate := rateWapper.ExpectedRate[i]
-		minRate := rateWapper.SlippageRate[i]
-		rateReturn = append(rateReturn, tomochain.Rate{
-			source, dest, rate.String(), minRate.String(),
-		})
-	}
-	return rateReturn, nil
 }
 
 func (self *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRaw, latestBlock string) (*[]tomochain.EventHistory, error) {

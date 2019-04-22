@@ -52,8 +52,7 @@ func (self *HTTPFetcher) GetListToken() ([]tomochain.Token, error) {
 		err = errors.New("list token from api is empty")
 		return nil, err
 	}
-	log.Printf("================GetListToken", self.tradingAPIEndpoint)
-	log.Printf("================GetListToken", data)
+
 	return data, nil
 }
 
@@ -129,7 +128,8 @@ type TokenPrice struct {
 }
 
 // GetRateUsdEther get usd from api
-func (self *HTTPFetcher) GetRateUsdEther() (string, error) {
+func (self *HTTPFetcher) GetRateUsdTomo() (string, error) {
+	log.Print("========================GetRateUsdTomo", self.apiEndpoint)
 	var ethPrice string
 	url := fmt.Sprintf("%s/token_price?currency=USD", self.apiEndpoint)
 	b, err := fCommon.HTTPCall(url)
