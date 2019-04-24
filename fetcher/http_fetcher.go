@@ -31,8 +31,8 @@ func NewHTTPFetcher(tradingAPIEndpoint, gasStationEndpoint, apiEndpoint string) 
 	}
 }
 
-func (self *HTTPFetcher) GetListToken() ([]tomochain.Token, error) {
-	b, err := fCommon.HTTPCall(self.tradingAPIEndpoint)
+func (httpFetcher *HTTPFetcher) GetListToken() ([]tomochain.Token, error) {
+	b, err := fCommon.HTTPCall(httpFetcher.tradingAPIEndpoint)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -62,8 +62,8 @@ type GasStation struct {
 	Low      float64 `json:"safeLow"`
 }
 
-func (self *HTTPFetcher) GetGasPrice() (*tomochain.GasPrice, error) {
-	b, err := fCommon.HTTPCall(self.gasStationEndPoint)
+func (httpFetcher *HTTPFetcher) GetGasPrice() (*tomochain.GasPrice, error) {
+	b, err := fCommon.HTTPCall(httpFetcher.gasStationEndPoint)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -87,8 +87,8 @@ func (self *HTTPFetcher) GetGasPrice() (*tomochain.GasPrice, error) {
 
 // get data from tracker.kyber
 
-func (self *HTTPFetcher) GetRate7dData() (map[string]*tomochain.Rates, error) {
-	trackerAPI := self.apiEndpoint + "/rates7d"
+func (httpFetcher *HTTPFetcher) GetRate7dData() (map[string]*tomochain.Rates, error) {
+	trackerAPI := httpFetcher.apiEndpoint + "/rates7d"
 	b, err := fCommon.HTTPCall(trackerAPI)
 	if err != nil {
 		log.Print(err)
@@ -103,7 +103,7 @@ func (self *HTTPFetcher) GetRate7dData() (map[string]*tomochain.Rates, error) {
 	return trackerData, nil
 }
 
-func (self *HTTPFetcher) GetUserInfo(url string) (*common.UserInfo, error) {
+func (httpFetcher *HTTPFetcher) GetUserInfo(url string) (*common.UserInfo, error) {
 	userInfo := &common.UserInfo{}
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
@@ -118,6 +118,7 @@ func (self *HTTPFetcher) GetUserInfo(url string) (*common.UserInfo, error) {
 	return userInfo, nil
 }
 
+//TokenPrices
 type TokenPrice struct {
 	Data []struct {
 		Symbol string  `json:"symbol"`
@@ -127,11 +128,10 @@ type TokenPrice struct {
 	TimeUpdate uint64 `json:"timeUpdated"`
 }
 
-// GetRateUsdEther get usd from api
-func (self *HTTPFetcher) GetRateUsdTomo() (string, error) {
-	log.Print("========================GetRateUsdTomo", self.apiEndpoint)
+// GetRateUsdTomo get usd from api
+func (httpFetcher *HTTPFetcher) GetRateUsdTomo() (string, error) {
 	var ethPrice string
-	url := fmt.Sprintf("%s/token_price?currency=USD", self.apiEndpoint)
+	url := fmt.Sprintf("%s/token_price?currency=USD", httpFetcher.apiEndpoint)
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)

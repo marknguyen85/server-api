@@ -13,6 +13,7 @@ import (
 	persister "github.com/marknguyen85/server-api/persister"
 )
 
+//HTTPServer struct
 type HTTPServer struct {
 	fetcher   *fetcher.Fetcher
 	persister persister.Persister
@@ -20,8 +21,9 @@ type HTTPServer struct {
 	r         *gin.Engine
 }
 
-func (self *HTTPServer) GetRate(c *gin.Context) {
-	isNewRate := self.persister.GetIsNewRate()
+//GetRate func
+func (httpServer *HTTPServer) GetRate(c *gin.Context) {
+	isNewRate := httpServer.persister.GetIsNewRate()
 	if isNewRate != true {
 		c.JSON(
 			http.StatusOK,
@@ -30,16 +32,17 @@ func (self *HTTPServer) GetRate(c *gin.Context) {
 		return
 	}
 
-	rates := self.persister.GetRate()
-	updateAt := self.persister.GetTimeUpdateRate()
+	rates := httpServer.persister.GetRate()
+	updateAt := httpServer.persister.GetTimeUpdateRate()
 	c.JSON(
 		http.StatusOK,
 		gin.H{"success": true, "updateAt": updateAt, "data": rates},
 	)
 }
 
-func (self *HTTPServer) GetRateUSD(c *gin.Context) {
-	if !self.persister.GetIsNewRateUSD() {
+//GetRateUSD func
+func (httpServer *HTTPServer) GetRateUSD(c *gin.Context) {
+	if !httpServer.persister.GetIsNewRateUSD() {
 		c.JSON(
 			http.StatusOK,
 			gin.H{"success": false},
@@ -47,15 +50,16 @@ func (self *HTTPServer) GetRateUSD(c *gin.Context) {
 		return
 	}
 
-	rates := self.persister.GetRateUSD()
+	rates := httpServer.persister.GetRateUSD()
 	c.JSON(
 		http.StatusOK,
 		gin.H{"success": true, "data": rates},
 	)
 }
 
-func (self *HTTPServer) GetRateTOMO(c *gin.Context) {
-	if !self.persister.GetIsNewRateUSD() {
+//GetRateTOMO func
+func (httpServer *HTTPServer) GetRateTOMO(c *gin.Context) {
+	if !httpServer.persister.GetIsNewRateUSD() {
 		c.JSON(
 			http.StatusOK,
 			gin.H{"success": false},
@@ -63,14 +67,15 @@ func (self *HTTPServer) GetRateTOMO(c *gin.Context) {
 		return
 	}
 
-	tomoRate := self.persister.GetRateTOMO()
+	tomoRate := httpServer.persister.GetRateTOMO()
 	c.JSON(
 		http.StatusOK,
 		gin.H{"success": true, "data": tomoRate},
 	)
 }
 
-func (self *HTTPServer) GetErrorLog(c *gin.Context) {
+//GetErrorLog func
+func (httpServer *HTTPServer) GetErrorLog(c *gin.Context) {
 	dat, err := ioutil.ReadFile("error.log")
 	if err != nil {
 		log.Print(err)
@@ -85,10 +90,11 @@ func (self *HTTPServer) GetErrorLog(c *gin.Context) {
 	)
 }
 
-func (self *HTTPServer) GetLast7D(c *gin.Context) {
+//GetLast7D func
+func (httpServer *HTTPServer) GetLast7D(c *gin.Context) {
 	listTokens := c.Query("listToken")
-	data := self.persister.GetLast7D(listTokens)
-	if self.persister.GetIsNewTrackerData() {
+	data := httpServer.persister.GetLast7D(listTokens)
+	if httpServer.persister.GetIsNewTrackerData() {
 		c.JSON(
 			http.StatusOK,
 			gin.H{"success": true, "data": data, "status": "latest"},
@@ -101,33 +107,39 @@ func (self *HTTPServer) GetLast7D(c *gin.Context) {
 	)
 }
 
-func (self *HTTPServer) getCacheVersion(c *gin.Context) {
-	timeRun := self.persister.GetTimeVersion()
+//getCacheVersion func
+func (httpServer *HTTPServer) getCacheVersion(c *gin.Context) {
+	timeRun := httpServer.persister.GetTimeVersion()
 	c.JSON(
 		http.StatusOK,
 		gin.H{"success": true, "data": timeRun},
 	)
 }
 
-func (self *HTTPServer) Run(chainTexENV string) {
-	self.r.GET("/getRateUSD", self.GetRateUSD)
-	self.r.GET("/rateUSD", self.GetRateUSD)
+//Run func
+func (httpServer *HTTPServer) Run(chainTexENV string) {
+	httpServer.r.GET("/getRate", httpServer.GetRate)
+	httpServer.r.GET("/rate", httpServer.GetRate)
 
-	self.r.GET("/getLast7D", self.GetLast7D)
-	self.r.GET("/last7D", self.GetLast7D)
+	httpServer.r.GET("/getRateUSD", httpServer.GetRateUSD)
+	httpServer.r.GET("/rateUSD", httpServer.GetRateUSD)
 
-	self.r.GET("/getRateTOMO", self.GetRateTOMO)
-	self.r.GET("/rateTOMO", self.GetRateTOMO)
+	httpServer.r.GET("/getLast7D", httpServer.GetLast7D)
+	httpServer.r.GET("/last7D", httpServer.GetLast7D)
 
-	self.r.GET("/cacheVersion", self.getCacheVersion)
+	httpServer.r.GET("/getRateTOMO", httpServer.GetRateTOMO)
+	httpServer.r.GET("/rateTOMO", httpServer.GetRateTOMO)
+
+	httpServer.r.GET("/cacheVersion", httpServer.getCacheVersion)
 
 	if chainTexENV != "production" {
-		self.r.GET("/9d74529bc6c25401a2f984ccc9b0b2b3", self.GetErrorLog)
+		httpServer.r.GET("/9d74529bc6c25401a2f984ccc9b0b2b3", httpServer.GetErrorLog)
 	}
 
-	self.r.Run(self.host)
+	httpServer.r.Run(httpServer.host)
 }
 
+//NewHTTPServer contruct
 func NewHTTPServer(host string, persister persister.Persister, fetcher *fetcher.Fetcher) *HTTPServer {
 	r := gin.Default()
 	r.Use(sentry.Recovery(raven.DefaultClient, false))

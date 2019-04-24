@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/marknguyen85/server-api/tomochain"
 	fCommon "github.com/marknguyen85/server-api/fetcher/fetcher-common"
+	"github.com/marknguyen85/server-api/tomochain"
 )
 
 type CMCFetcher struct {
@@ -23,9 +23,9 @@ func NewCMCFetcher() *CMCFetcher {
 	}
 }
 
-func (self *CMCFetcher) GetRateUsdTomo() (string, error) {
-	// typeMarket := self.typeMarket
-	url := self.APIV1 + "/ticker/tomochain"
+func (cMCFetcher *CMCFetcher) GetRateUsdTomo() (string, error) {
+	// typeMarket := cMCFetcher.typeMarket
+	url := cMCFetcher.APIV1 + "/ticker/tomochain"
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
@@ -40,8 +40,8 @@ func (self *CMCFetcher) GetRateUsdTomo() (string, error) {
 	return rateItem[0].PriceUsd, nil
 }
 
-func (self *CMCFetcher) GetGeneralInfo(usdId string) (*tomochain.TokenGeneralInfo, error) {
-	url := self.APIV2 + "/ticker/" + usdId + "/?convert=TOMO"
+func (cMCFetcher *CMCFetcher) GetGeneralInfo(usdId string) (*tomochain.TokenGeneralInfo, error) {
+	url := cMCFetcher.APIV2 + "/ticker/" + usdId + "/?convert=TOMO"
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
@@ -62,7 +62,3 @@ func (self *CMCFetcher) GetGeneralInfo(usdId string) (*tomochain.TokenGeneralInf
 	log.Print(err)
 	return nil, err
 }
-
-// func (self *CMCFetcher) GetTypeMarket() string {
-// 	return self.typeMarket
-// }

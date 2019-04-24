@@ -30,6 +30,7 @@ type TomoChain struct {
 	averageBlockTime int64
 }
 
+//NewTomoChain contruct func
 func NewTomoChain(network string, networkAbiStr string, tradeTopic string, averageBlockTime int64) (*TomoChain, error) {
 
 	networkAbi, err := abi.JSON(strings.NewReader(networkAbiStr))
@@ -51,11 +52,12 @@ func getOrAmount(amount *big.Int) *big.Int {
 	return orAmount
 }
 
-func (self *TomoChain) EncodeRateData(source, dest string, quantity *big.Int) (string, error) {
+//EncodeRateData func
+func (tomoChain *TomoChain) EncodeRateData(source, dest string, quantity *big.Int) (string, error) {
 	srcAddr := common.HexToAddress(source)
 	destAddr := common.HexToAddress(dest)
 
-	encodedData, err := self.networkAbi.Pack("getExpectedRate", srcAddr, destAddr, getOrAmount(quantity))
+	encodedData, err := tomoChain.networkAbi.Pack("getExpectedRate", srcAddr, destAddr, getOrAmount(quantity))
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -64,8 +66,9 @@ func (self *TomoChain) EncodeRateData(source, dest string, quantity *big.Int) (s
 	return common.Bytes2Hex(encodedData), nil
 }
 
-func (self *TomoChain) EncodeKyberEnable() (string, error) {
-	encodedData, err := self.networkAbi.Pack("enabled")
+//EncodeChainTeXEnable func
+func (tomoChain *TomoChain) EncodeChainTeXEnable() (string, error) {
+	encodedData, err := tomoChain.networkAbi.Pack("enabled")
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -73,14 +76,14 @@ func (self *TomoChain) EncodeKyberEnable() (string, error) {
 	return common.Bytes2Hex(encodedData), nil
 }
 
-func (self *TomoChain) ExtractEnabled(result string) (bool, error) {
+func (tomoChain *TomoChain) ExtractEnabled(result string) (bool, error) {
 	enabledByte, err := hexutil.Decode(result)
 	if err != nil {
 		log.Print(err)
 		return false, err
 	}
 	var enabled bool
-	err = self.networkAbi.Unpack(&enabled, "enabled", enabledByte)
+	err = tomoChain.networkAbi.Unpack(&enabled, "enabled", enabledByte)
 	if err != nil {
 		log.Print(err)
 		return false, err
@@ -88,8 +91,8 @@ func (self *TomoChain) ExtractEnabled(result string) (bool, error) {
 	return enabled, nil
 }
 
-func (self *TomoChain) EncodeMaxGasPrice() (string, error) {
-	encodedData, err := self.networkAbi.Pack("maxGasPrice")
+func (tomoChain *TomoChain) EncodeMaxGasPrice() (string, error) {
+	encodedData, err := tomoChain.networkAbi.Pack("maxGasPrice")
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -97,14 +100,14 @@ func (self *TomoChain) EncodeMaxGasPrice() (string, error) {
 	return common.Bytes2Hex(encodedData), nil
 }
 
-func (self *TomoChain) ExtractMaxGasPrice(result string) (string, error) {
+func (tomoChain *TomoChain) ExtractMaxGasPrice(result string) (string, error) {
 	gasByte, err := hexutil.Decode(result)
 	if err != nil {
 		log.Print(err)
 		return "", err
 	}
 	var gasPrice *big.Int
-	err = self.networkAbi.Unpack(&gasPrice, "maxGasPrice", gasByte)
+	err = tomoChain.networkAbi.Unpack(&gasPrice, "maxGasPrice", gasByte)
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -112,7 +115,7 @@ func (self *TomoChain) ExtractMaxGasPrice(result string) (string, error) {
 	return gasPrice.String(), nil
 }
 
-func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol string) (tomochain.Rate, error) {
+func (tomoChain *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol string) (tomochain.Rate, error) {
 	var rate tomochain.Rate
 	rateByte, err := hexutil.Decode(result)
 	if err != nil {
@@ -120,7 +123,7 @@ func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol s
 		return rate, err
 	}
 	var rateNetwork RateNetwork
-	err = self.networkAbi.Unpack(&rateNetwork, "getExpectedRate", rateByte)
+	err = tomoChain.networkAbi.Unpack(&rateNetwork, "getExpectedRate", rateByte)
 	if err != nil {
 		log.Print(err)
 		return rate, err
@@ -134,9 +137,9 @@ func (self *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol s
 	}, nil
 }
 
-func (self *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRaw, latestBlock string) (*[]tomochain.EventHistory, error) {
+func (tomoChain *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRaw, latestBlock string) (*[]tomochain.EventHistory, error) {
 	//get latestBlock to calculate timestamp
-	events, err := self.ReadEvents(eventRaw, "node", latestBlock)
+	events, err := tomoChain.ReadEvents(eventRaw, "node", latestBlock)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -144,9 +147,9 @@ func (self *TomoChain) ReadEventsWithBlockNumber(eventRaw *[]tomochain.EventRaw,
 	return events, nil
 }
 
-func (self *TomoChain) ReadEventsWithTimeStamp(eventRaw *[]tomochain.EventRaw) (*[]tomochain.EventHistory, error) {
+func (tomoChain *TomoChain) ReadEventsWithTimeStamp(eventRaw *[]tomochain.EventRaw) (*[]tomochain.EventHistory, error) {
 	//get latestBlock to calculate timestamp
-	events, err := self.ReadEvents(eventRaw, "tomoscan", "0")
+	events, err := tomoChain.ReadEvents(eventRaw, "tomoscan", "0")
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -161,7 +164,7 @@ type LogData struct {
 	ActualDestAmount *big.Int       `json:"actualDestAmount"`
 }
 
-func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch string, latestBlock string) (*[]tomochain.EventHistory, error) {
+func (tomoChain *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch string, latestBlock string) (*[]tomochain.EventHistory, error) {
 	listEvent := *listEventAddr
 	endIndex := len(listEvent) - 1
 	// var beginIndex = 0
@@ -176,7 +179,7 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch
 			break
 		}
 		//filter amount
-		isSmallAmount, err := self.IsSmallAmount(listEvent[i])
+		isSmallAmount, err := tomoChain.IsSmallAmount(listEvent[i])
 		if err != nil {
 			log.Print(err)
 			continue
@@ -203,7 +206,7 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch
 			timestamp = timestampHex.String()
 			//fmt.Println(timestamp)
 		} else {
-			timestamp, err = self.Gettimestamp(blockNumber.String(), latestBlock, self.averageBlockTime)
+			timestamp, err = tomoChain.Gettimestamp(blockNumber.String(), latestBlock, tomoChain.averageBlockTime)
 			if err != nil {
 				log.Print(err)
 				continue
@@ -217,7 +220,7 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch
 			continue
 		}
 		//fmt.Print(listEvent[i].Data)
-		err = self.networkAbi.Unpack(&logData, "ExecuteTrade", data)
+		err = tomoChain.networkAbi.Unpack(&logData, "ExecuteTrade", data)
 		if err != nil {
 			log.Print(err)
 			continue
@@ -236,14 +239,14 @@ func (self *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch
 	return &events, nil
 }
 
-func (self *TomoChain) IsSmallAmount(eventRaw tomochain.EventRaw) (bool, error) {
+func (tomoChain *TomoChain) IsSmallAmount(eventRaw tomochain.EventRaw) (bool, error) {
 	data, err := hexutil.Decode(eventRaw.Data)
 	if err != nil {
 		log.Print(err)
 		return true, err
 	}
 	var logData LogData
-	err = self.networkAbi.Unpack(&logData, "ExecuteTrade", data)
+	err = tomoChain.networkAbi.Unpack(&logData, "ExecuteTrade", data)
 	if err != nil {
 		log.Print(err)
 		return true, err
@@ -276,7 +279,7 @@ func (self *TomoChain) IsSmallAmount(eventRaw tomochain.EventRaw) (bool, error) 
 	return false, nil
 }
 
-func (self *TomoChain) Gettimestamp(block string, latestBlock string, averageBlockTime int64) (string, error) {
+func (tomoChain *TomoChain) Gettimestamp(block string, latestBlock string, averageBlockTime int64) (string, error) {
 	fromBlock, err := strconv.ParseInt(block, 10, 64)
 	if err != nil {
 		log.Print(err)

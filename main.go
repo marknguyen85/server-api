@@ -58,7 +58,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Print("****************************TryUpdateListToken*****************************1")
 	err = fertcherIns.TryUpdateListToken()
+	log.Print("****************************TryUpdateListToken*****************************2")
 	if err != nil {
 		log.Println(err)
 	}
@@ -108,12 +110,14 @@ func main() {
 	}
 	intervalFetchGeneralInfoTokens := time.Duration((tokenNum * 7) + bonusTimeWait)
 
-	runFetchData(persisterIns, boltIns, fetchRateUSD, fertcherIns, 300)
+	runFetchData(persisterIns, boltIns, fetchRateUSD, fertcherIns, 300) //5 minutes
 
 	runFetchData(persisterIns, boltIns, fetchGeneralInfoTokens, fertcherIns, intervalFetchGeneralInfoTokens)
 
-	runFetchData(persisterIns, boltIns, fetchRate7dData, fertcherIns, 300)
+	runFetchData(persisterIns, boltIns, fetchRate7dData, fertcherIns, 300) //5 minutes
 
+	runFetchData(persisterIns, boltIns, fetchRate, fertcherIns, 15) //15 seconds
+	runFetchData(persisterIns, boltIns, fetchRateWithFallback, fertcherIns, 300)
 	//run server
 	server := http.NewHTTPServer(":3001", persisterIns, fertcherIns)
 	server.Run(chainTexENV)
@@ -187,4 +191,73 @@ func fetchRate7dData(persister persister.Persister, boltIns persister.BoltInterf
 	}
 	persister.SaveMarketData(data, currentGeneral, mapToken)
 	// persister.SetIsNewMarketInfo(true)
+}
+
+func fetchRate(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher) {
+	timeNow := time.Now().UTC().Unix()
+	var result []tomochain.Rate
+	currentRate := persister.GetRate()
+	tokenPriority := fetcher.GetListTokenPriority()
+	log.Print("**********************************************************", tokenPriority)
+	rates, err := fetcher.GetRate(currentRate, persister.GetIsNewRate(), tokenPriority, false)
+	if err != nil {
+		log.Print(err)
+		persister.SetIsNewRate(false)
+		return
+	}
+	mapRate := makeMapRate(rates)
+	for _, cr := range currentRate {
+		keyRate := fmt.Sprintf("%s_%s", cr.Source, cr.Dest)
+		if r, ok := mapRate[keyRate]; ok {
+			result = append(result, r)
+			delete(mapRate, keyRate)
+		} else {
+			result = append(result, cr)
+		}
+	}
+	// add new token to current rate
+	if len(mapRate) > 0 {
+		for _, nr := range mapRate {
+			result = append(result, nr)
+		}
+	}
+	persister.SaveRate(result, timeNow)
+	persister.SetIsNewRate(true)
+}
+
+func fetchRateWithFallback(persister persister.Persister, boltIns persister.BoltInterface, fetcher *fetcher.Fetcher) {
+	var result []tomochain.Rate
+	currentRate := persister.GetRate()
+	listToken := fetcher.GetListToken()
+	newList := make(map[string]tomochain.Token)
+	for _, t := range listToken {
+		if !t.Priority {
+			newList[t.Symbol] = t
+		}
+	}
+	rates, err := fetcher.GetRate(currentRate, persister.GetIsNewRate(), newList, true)
+	if err != nil {
+		log.Print(err)
+		persister.SetIsNewRate(false)
+		return
+	}
+	mapRate := makeMapRate(rates)
+	for _, cr := range currentRate {
+		keyRate := fmt.Sprintf("%s_%s", cr.Source, cr.Dest)
+		if r, ok := mapRate[keyRate]; ok {
+			result = append(result, r)
+			if keyRate != "TOMO_TOMO" {
+				delete(mapRate, keyRate)
+			}
+		} else {
+			result = append(result, cr)
+		}
+	}
+	// add new token to current rate
+	if len(mapRate) > 1 {
+		for _, nr := range mapRate {
+			result = append(result, nr)
+		}
+	}
+	persister.SaveRate(result, 0)
 }

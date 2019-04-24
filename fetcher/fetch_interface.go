@@ -10,7 +10,7 @@ type RateUSD struct {
 }
 
 type FetcherInterface interface {
-	EthCall(string, string) (string, error)
+	TomoCall(string, string) (string, error)
 	GetLatestBlock() (string, error)
 	GetTypeName() string
 

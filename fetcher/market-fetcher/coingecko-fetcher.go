@@ -21,9 +21,9 @@ func NewCGFetcher() *CGFetcher {
 	}
 }
 
-func (self *CGFetcher) GetRateUsdTomo() (string, error) {
-	// typeMarket := self.typeMarket
-	url := self.API + "/coins/tomochain"
+func (cGFetcher *CGFetcher) GetRateUsdTomo() (string, error) {
+	// typeMarket := cGFetcher.typeMarket
+	url := cGFetcher.API + "/coins/tomochain"
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {
 		log.Print(err)
@@ -39,8 +39,8 @@ func (self *CGFetcher) GetRateUsdTomo() (string, error) {
 	return rateString, nil
 }
 
-func (self *CGFetcher) GetGeneralInfo(coinID string) (*tomochain.TokenGeneralInfo, error) {
-	url := fmt.Sprintf("%s/coins/%s?tickers=false&community_data=false&developer_data=false&sparkline=false", self.API, coinID)
+func (cGFetcher *CGFetcher) GetGeneralInfo(coinID string) (*tomochain.TokenGeneralInfo, error) {
+	url := fmt.Sprintf("%s/coins/%s?tickers=false&community_data=false&developer_data=false&sparkline=false", cGFetcher.API, coinID)
 
 	b, err := fCommon.HTTPCall(url)
 	if err != nil {

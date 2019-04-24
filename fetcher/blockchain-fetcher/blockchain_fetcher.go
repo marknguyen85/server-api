@@ -35,15 +35,15 @@ func NewBlockchainFetcher(typeName string, endpoint string, apiKey string) (*Blo
 	return &blockchain, nil
 }
 
-func (self *BlockchainFetcher) EthCall(to string, data string) (string, error) {
+func (blcFetcher *BlockchainFetcher) TomoCall(to string, data string) (string, error) {
 	params := make(map[string]string)
 	params["data"] = "0x" + data
 	params["to"] = to
 
-	ctx, cancel := context.WithTimeout(context.Background(), self.timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), blcFetcher.timeout)
 	defer cancel()
 	var result string
-	err := self.client.CallContext(ctx, &result, "eth_call", params, "latest")
+	err := blcFetcher.client.CallContext(ctx, &result, "eth_call", params, "latest")
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -52,15 +52,15 @@ func (self *BlockchainFetcher) EthCall(to string, data string) (string, error) {
 	return result, nil
 }
 
-func (self *BlockchainFetcher) GetRate(to string, data string) (string, error) {
+func (blcFetcher *BlockchainFetcher) GetRate(to string, data string) (string, error) {
 	params := make(map[string]string)
 	params["data"] = "0x" + data
 	params["to"] = to
 
-	ctx, cancel := context.WithTimeout(context.Background(), self.timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), blcFetcher.timeout)
 	defer cancel()
 	var result string
-	err := self.client.CallContext(ctx, &result, "eth_call", params, "latest")
+	err := blcFetcher.client.CallContext(ctx, &result, "eth_call", params, "latest")
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -70,17 +70,18 @@ func (self *BlockchainFetcher) GetRate(to string, data string) (string, error) {
 
 }
 
-func (self *BlockchainFetcher) GetLatestBlock() (string, error) {
+func (blcFetcher *BlockchainFetcher) GetLatestBlock() (string, error) {
 	var blockNum *hexutil.Big
-	ctx, cancel := context.WithTimeout(context.Background(), self.timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), blcFetcher.timeout)
 	defer cancel()
-	err := self.client.CallContext(ctx, &blockNum, "eth_blockNumber", "latest")
+	err := blcFetcher.client.CallContext(ctx, &blockNum, "eth_blockNumber", "latest")
 	if err != nil {
 		return "", err
 	}
 	return blockNum.ToInt().String(), nil
 }
 
+//TopicParam struct
 type TopicParam struct {
 	FromBlock string   `json:"fromBlock"`
 	ToBlock   string   `json:"toBlock"`
@@ -88,6 +89,7 @@ type TopicParam struct {
 	Topics    []string `json:"topics"`
 }
 
-func (self *BlockchainFetcher) GetTypeName() string {
-	return self.TypeName
+//GetTypeName get type name
+func (blcFetcher *BlockchainFetcher) GetTypeName() string {
+	return blcFetcher.TypeName
 }
