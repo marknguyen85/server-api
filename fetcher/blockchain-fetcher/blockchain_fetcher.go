@@ -35,6 +35,7 @@ func NewBlockchainFetcher(typeName string, endpoint string, apiKey string) (*Blo
 	return &blockchain, nil
 }
 
+//TomoCall func
 func (blcFetcher *BlockchainFetcher) TomoCall(to string, data string) (string, error) {
 	params := make(map[string]string)
 	params["data"] = "0x" + data
@@ -52,6 +53,7 @@ func (blcFetcher *BlockchainFetcher) TomoCall(to string, data string) (string, e
 	return result, nil
 }
 
+//GetRate func
 func (blcFetcher *BlockchainFetcher) GetRate(to string, data string) (string, error) {
 	params := make(map[string]string)
 	params["data"] = "0x" + data
@@ -62,7 +64,6 @@ func (blcFetcher *BlockchainFetcher) GetRate(to string, data string) (string, er
 	var result string
 	err := blcFetcher.client.CallContext(ctx, &result, "eth_call", params, "latest")
 	if err != nil {
-		log.Print(err)
 		return "", err
 	}
 
@@ -70,6 +71,7 @@ func (blcFetcher *BlockchainFetcher) GetRate(to string, data string) (string, er
 
 }
 
+//GetLatestBlock func
 func (blcFetcher *BlockchainFetcher) GetLatestBlock() (string, error) {
 	var blockNum *hexutil.Big
 	ctx, cancel := context.WithTimeout(context.Background(), blcFetcher.timeout)

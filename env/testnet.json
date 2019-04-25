@@ -4,6 +4,10 @@
         "endPoint": "https://scan.testnet.tomochain.com",
         "api_key": "D8YAEQ3V4THAPDA9YSB1YGA1QY9KAMHY6M",
         "type": "tomoscan"
+    },
+    {
+      "endPoint" : "https://testnet.tomochain.com",
+      "type": "node"
     }
   ],
   "api_usd":"https://api.coinmarketcap.com",

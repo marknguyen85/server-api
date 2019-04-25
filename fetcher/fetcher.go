@@ -405,8 +405,7 @@ func (fetcher *Fetcher) GetRate(currentRate []tomochain.Rate, isNewRate bool, ma
 	rates, err = fetcher.runFetchRate(sourceArr, destArr, sourceSymbolArr, destSymbolArr, amountArr)
 
 	if err != nil && fallback {
-		log.Println("cannot get rate from wrapper, change to get from network")
-		rates, _ = fetcher.getRateNetwork(sourceArr, sourceSymbolArr, destArr, destSymbolArr, amountArr)
+		log.Println("cannot get rate from network proxy, change to get from network")
 	}
 	if err != nil {
 		log.Println(err)
@@ -417,10 +416,61 @@ func (fetcher *Fetcher) GetRate(currentRate []tomochain.Rate, isNewRate bool, ma
 
 //runFetchRate func
 func (fetcher *Fetcher) runFetchRate(sourceArr, destArr, sourceSymbolArr, destSymbolArr []string, amountArr []*big.Int) ([]tomochain.Rate, error) {
-	log.Print("===========runFetchRate***************************************", sourceArr, destArr, sourceSymbolArr, destSymbolArr, amountArr)
-	return nil, errors.New("Cannot get rate")
+	var (
+		tokenNum = len(sourceArr)
+		rates    []tomochain.Rate
+	)
+
+	for i := 0; i < tokenNum; i++ {
+		var (
+			dataAbi string
+			err     error
+			rate    tomochain.Rate
+		)
+		dataAbi, err = fetcher.tomochain.EncodeRateData(sourceArr[i], destArr[i], amountArr[i])
+
+		if err != nil {
+			log.Print(err)
+		} else {
+			rate, err = fetcher.GetRateFromAbi(dataAbi, sourceSymbolArr[i], destSymbolArr[i])
+			if err != nil {
+				log.Print(err)
+			}
+
+			rates = append(rates, rate)
+		}
+	}
+
+	return rates, nil
 }
 
+//GetRateFromAbi func get rate from abi string
+func (fetcher *Fetcher) GetRateFromAbi(dataAbi string, fromSymbol string, toSymbol string) (tomochain.Rate, error) {
+	var rate tomochain.Rate
+
+	for _, fetIns := range fetcher.fetIns {
+		if fetIns.GetTypeName() == "tomoscan" {
+			continue
+		}
+
+		result, err := fetIns.GetRate(fetcher.info.Network, dataAbi)
+		if err != nil {
+			log.Print(err)
+			continue
+		}
+
+		rate, err = fetcher.tomochain.ExtractRateData(result, fromSymbol, toSymbol)
+		if err != nil {
+			log.Print(err)
+			continue
+		}
+		return rate, nil
+	}
+
+	return rate, nil
+}
+
+//makeDataGetRate func
 func (fetcher *Fetcher) makeDataGetRate(listTokens map[string]tomochain.Token, rates []tomochain.Rate) ([]string, []string, []string, []string, []*big.Int) {
 	sourceAddr := make([]string, 0)
 	sourceSymbol := make([]string, 0)
@@ -490,30 +540,6 @@ func (fetcher *Fetcher) getInitRate(listTokens map[string]tomochain.Token) []tom
 	return initRate
 }
 
-//getRateNetwork func
-func (fetcher *Fetcher) getRateNetwork(sourceArr []string, sourceSymbolArr []string, destArr []string, destSymbolArr []string, amountArr []*big.Int) ([]tomochain.Rate, error) {
-	var result []tomochain.Rate
-	for index, source := range sourceArr {
-		sourceSymbol := sourceSymbolArr[index]
-		destSymbol := destSymbolArr[index]
-		rate, err := fetcher.queryRateBlockchain(source, destArr[index], sourceSymbol, destSymbol, amountArr[index])
-		if err != nil {
-			log.Printf("cant get rate pair %s_%s", sourceSymbol, destSymbol)
-			emptyRate := tomochain.Rate{
-				Source:  sourceSymbol,
-				Dest:    destSymbol,
-				Rate:    "0",
-				Minrate: "0",
-			}
-			result = append(result, emptyRate)
-		} else {
-			result = append(result, rate)
-		}
-		time.Sleep(timeW8Req * time.Millisecond)
-	}
-	return result, nil
-}
-
 //queryRateBlockchain func
 func (fetcher *Fetcher) queryRateBlockchain(fromAddr, toAddr, fromSymbol, toSymbol string, amount *big.Int) (tomochain.Rate, error) {
 	var rate tomochain.Rate
@@ -524,7 +550,7 @@ func (fetcher *Fetcher) queryRateBlockchain(fromAddr, toAddr, fromSymbol, toSymb
 	}
 
 	for _, fetIns := range fetcher.fetIns {
-		if fetIns.GetTypeName() == "etherscan" {
+		if fetIns.GetTypeName() == "tomoscan" {
 			continue
 		}
 		result, err := fetIns.GetRate(fetcher.info.Network, dataAbi)

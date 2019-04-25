@@ -58,9 +58,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Print("****************************TryUpdateListToken*****************************1")
 	err = fertcherIns.TryUpdateListToken()
-	log.Print("****************************TryUpdateListToken*****************************2")
 	if err != nil {
 		log.Println(err)
 	}
@@ -198,7 +196,6 @@ func fetchRate(persister persister.Persister, boltIns persister.BoltInterface, f
 	var result []tomochain.Rate
 	currentRate := persister.GetRate()
 	tokenPriority := fetcher.GetListTokenPriority()
-	log.Print("**********************************************************", tokenPriority)
 	rates, err := fetcher.GetRate(currentRate, persister.GetIsNewRate(), tokenPriority, false)
 	if err != nil {
 		log.Print(err)

@@ -46,18 +46,12 @@ func NewTomoChain(network string, networkAbiStr string, tradeTopic string, avera
 	return tomochain, nil
 }
 
-func getOrAmount(amount *big.Int) *big.Int {
-	orNumber := big.NewInt(0).Exp(big.NewInt(2), big.NewInt(255), nil)
-	orAmount := big.NewInt(0).Or(amount, orNumber)
-	return orAmount
-}
-
 //EncodeRateData func
 func (tomoChain *TomoChain) EncodeRateData(source, dest string, quantity *big.Int) (string, error) {
 	srcAddr := common.HexToAddress(source)
 	destAddr := common.HexToAddress(dest)
 
-	encodedData, err := tomoChain.networkAbi.Pack("getExpectedRate", srcAddr, destAddr, getOrAmount(quantity))
+	encodedData, err := tomoChain.networkAbi.Pack("getExpectedRate", srcAddr, destAddr, quantity)
 	if err != nil {
 		log.Print(err)
 		return "", err
@@ -115,17 +109,19 @@ func (tomoChain *TomoChain) ExtractMaxGasPrice(result string) (string, error) {
 	return gasPrice.String(), nil
 }
 
+//ExtractRateData func
 func (tomoChain *TomoChain) ExtractRateData(result string, sourceSymbol, destSymbol string) (tomochain.Rate, error) {
 	var rate tomochain.Rate
 	rateByte, err := hexutil.Decode(result)
+
 	if err != nil {
-		log.Print(err)
+		log.Print("**********************Decode error******************", err)
 		return rate, err
 	}
 	var rateNetwork RateNetwork
 	err = tomoChain.networkAbi.Unpack(&rateNetwork, "getExpectedRate", rateByte)
 	if err != nil {
-		log.Print(err)
+		log.Print("**********************Unpack getExpectedRate******************", err)
 		return rate, err
 	}
 
@@ -167,10 +163,6 @@ type LogData struct {
 func (tomoChain *TomoChain) ReadEvents(listEventAddr *[]tomochain.EventRaw, typeFetch string, latestBlock string) (*[]tomochain.EventHistory, error) {
 	listEvent := *listEventAddr
 	endIndex := len(listEvent) - 1
-	// var beginIndex = 0
-	// if endIndex > 4 {
-	// 	beginIndex = endIndex - 4
-	// }
 
 	index := 0
 	events := make([]tomochain.EventHistory, 0)
